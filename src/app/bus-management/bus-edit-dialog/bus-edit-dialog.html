@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Edit Bus</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Serial number</mat-label>
+      <input [formField]="busForm.serialNumber" matInput>
+        @for (error of busForm.serialNumber().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Brand</mat-label>
+      <input [formField]="busForm.brand" matInput>
+        @for (error of busForm.brand().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Capacity</mat-label>
+      <input type="number" [formField]="busForm.capacity" matInput>
+        @for (error of busForm.capacity().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton="outlined" (click)="closeDialog()">Cancel</button>
+    <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+</mat-dialog-actions>

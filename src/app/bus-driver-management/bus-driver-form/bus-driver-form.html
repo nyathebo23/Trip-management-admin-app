@@ -1,0 +1,47 @@
+<mat-card class="form-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Bus driver</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Username</mat-label>
+      <input [formField]="busDriverForm.username" matInput>
+      @for (error of busDriverForm.username().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>First name</mat-label>
+      <input [formField]="busDriverForm.firstname" matInput>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Last name</mat-label>
+      <input [formField]="busDriverForm.lastname" matInput>
+      @for (error of busDriverForm.lastname().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Password</mat-label>
+      <input type="password" [formField]="busDriverForm.password" matInput>
+      @for (error of busDriverForm.password().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Confirm Password</mat-label>
+      <input type="password" [formField]="busDriverForm.confirmPassword" matInput>
+      @for (error of busDriverForm.confirmPassword().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-card-actions [align]="'end'">
+      <button matButton="filled" (click)="submit()">Create</button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

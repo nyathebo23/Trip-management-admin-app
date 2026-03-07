@@ -1,0 +1,57 @@
+@use '@angular/material' as mat;
+
+:host {
+	display: block;
+}
+
+.login-page {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	//background: linear-gradient(180deg, var(--mat-sys-secondary) 0%, var(--mat-sys-primary) 100%);
+	padding: 24px;
+}
+
+.login-box {
+	width: 380px;
+	background: var(--mat-sys-neutral);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	padding: 28px;
+	border-radius: 10px;
+	box-shadow: 0 10px 30px var(--mat-sys-tertiary);
+}
+
+.login-title {
+	margin: 0 0 18px 0;
+	text-align: center;
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--mat-sys-secondary);
+}
+
+.full-width {
+	width: 100%;
+}
+
+mat-form-field {
+	display: block;
+	margin-bottom: 14px;
+}
+
+
+.login-button {
+	width: 100%;
+	margin-top: 6px;
+	color: #fff;
+}
+
+.login-error {
+	background: rgba(255, 69, 58, 0.12);
+	border: 1px solid rgba(255, 69, 58, 0.25);
+	color: #ffb4ab;
+	padding: 10px 12px;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	text-align: center;
+}

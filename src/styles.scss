@@ -1,0 +1,119 @@
+/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+
+.icons-option-block {
+    width: 120px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mat-icon {
+        cursor: pointer;
+    }
+}
+th {
+  font-size: 16px; 
+}
+.custom-header {
+    @include mat.table-overrides((
+        header-headline-weight: 600,
+        header-headline-color: var(--mat-sys-primary),
+    ));
+}
+
+.form-post-error {
+	background: rgba(255, 69, 58, 0.12);
+	border: 1px solid rgba(255, 69, 58, 0.25);
+	color: #ffb4ab;
+	padding: 10px 12px;
+	border-radius: 6px;
+	margin-bottom: 12px;
+	text-align: center;
+}
+.agency-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2; /* Limits the text to 2 lines */
+  overflow: hidden;      /* Hides the overflowing text */
+  text-overflow: ellipsis; 
+}
+.form-card {
+  max-width: 500px;
+  mat-card-content {
+    margin-top: 30px; 
+    margin-bottom: 20px;
+  }
+}
+
+.row {
+    display: flex; 
+    flex-direction: row;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-start {
+  align-items: flex-start;
+}
+
+@media screen and (max-width: 700px) {
+  .row {   
+    flex-direction: column;
+  }
+}
+
+.body-box {
+    margin: auto; 
+    padding: 20px;
+}
+
+.margin-h-10 {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.col-70 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 70%;
+}
+
+.col-60 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 60%;
+}
+
+.col-50 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 50%;
+}
+
+.col-40 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 40%;
+}
+
+.col-30 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 30%;
+}

@@ -1,0 +1,18 @@
+@if (agenciesResp$ | async; as resp) {
+    @if (resp.errorType == null) {
+        <div class="row" style="margin-top: 60px;">
+            <div class="body-box col-60">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title> Create new agency agent </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <app-agency-agent-form [agencies]="resp.data!"></app-agency-agent-form>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-agency-agent-table-list [agencies]="resp.data!"></app-agency-agent-table-list>
+            </div>
+            <div class="col-40"></div>
+        </div>
+    }
+}

@@ -1,0 +1,21 @@
+<div class="layout-container" >
+    <mat-toolbar class="layout-toolbar">
+      <button matMiniFab (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+      <h1 class="layout-app-name">Trip Manager App</h1>
+    </mat-toolbar>
+
+    <mat-sidenav-container class="layout-sidenav-container" [style.marginTop.px]="0">
+      <mat-sidenav #snav [mode]="'side'" [fixedInViewport]="true" fixedTopGap="56">
+        <mat-nav-list>
+          @for (nav of sideBarItems; track nav) {
+            <a mat-list-item  [routerLink]="[nav.route]" >{{nav.label }}</a>
+          }
+        </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <router-outlet />
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>
+
+

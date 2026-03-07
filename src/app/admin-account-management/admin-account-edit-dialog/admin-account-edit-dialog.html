@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Edit Admin</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Username</mat-label>
+      <input [formField]="adminForm.username" matInput>
+      @for (error of adminForm.username().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>First name</mat-label>
+      <input [formField]="adminForm.firstname" matInput>
+      @for (error of adminForm.firstname().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Last name</mat-label>
+      <input [formField]="adminForm.lastname" matInput>
+      @for (error of adminForm.lastname().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton="outlined" (click)="closeDialog()">Cancel</button>
+    <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+</mat-dialog-actions>

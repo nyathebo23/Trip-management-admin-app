@@ -1,0 +1,79 @@
+import { Component, inject, input, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { form, FormField, required } from '@angular/forms/signals';
+import { MatAnchor } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { TravelType } from '../enums/travel-type';
+
+import { TravelService } from '../../services/travel-service';
+import { TravelUpdateDialogData } from '../interfaces/travel-update-dialog-data';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { TravelData } from '../interfaces/travel-data';
+import { HttpErrorResponse } from '@angular/common/http';
+import { getErrorMessage } from '../../utils/response';
+
+@Component({
+  selector: 'app-travel-edit-dialog',
+  imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSelect, MatOption,
+    FormField, MatAnchor, MatDivider, MatDialogActions, MatDialogContent, MatDatepickerModule,
+   MatTimepickerModule, MatDialogTitle ],  
+  templateUrl: './travel-edit-dialog.html',
+  styleUrl: './travel-edit-dialog.scss',
+})
+export class TravelEditDialog {
+  readonly dialogRef = inject(MatDialogRef<TravelEditDialog>);
+  data = inject<TravelUpdateDialogData>(MAT_DIALOG_DATA);
+  travelService = inject(TravelService);
+  travelModel = signal<TravelData>({ 
+    departAgencyId: this.data.travelData.departAgencyId,
+    arrivalAgencyId: this.data.travelData.arrivalAgencyId,
+    busId: this.data.travelData.busId,
+    busDriverId: this.data.travelData.busDriverId,
+    plannedDepartDatetime: this.data.travelData.plannedDepartDatetime, 
+    travelType: this.data.travelData.travelType
+  });
+
+  travelTypes = [
+    {label: 'CLASSIC', value: TravelType.CLASSIC}, 
+    {label: 'VIP', value: TravelType.VIP}
+  ]; 
+
+  errorMessage = signal<string|null>(null);
+
+  travelForm = form(this.travelModel, (schema) => { 
+    required(schema.departAgencyId, {message: 'Departure agency is required'}); 
+    required(schema.arrivalAgencyId, {message: 'Arrival agency is required'});
+    required(schema.plannedDepartDatetime, {message: 'Departure datetime is required'});
+  });
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+  submit() { 
+    const travelData = this.travelModel();
+    if (travelData.departAgencyId == travelData.arrivalAgencyId) {
+      this.errorMessage.set("You can't travel with the same agency"); 
+      return;
+    }
+    const departCityId = this.data.agencies.find((val) => val.id == travelData.departAgencyId)!.city.id;
+    const arrivalCityId = this.data.agencies.find((val) => val.id == travelData.arrivalAgencyId)!.city.id;
+    if (departCityId == arrivalCityId) {
+      this.errorMessage.set("You can't travel within the same city"); 
+      return;
+    }
+    this.travelService.update(this.data.travelData.id, this.travelModel())
+    .subscribe({ 
+      next: () => {
+        this.errorMessage.set(null);
+      }, 
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage.set(getErrorMessage(err)); 
+      }}); 
+    }
+}

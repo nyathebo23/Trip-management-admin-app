@@ -1,0 +1,34 @@
+<div class="login-page">
+	<div class="login-box secondary">
+		<h2 class="login-title">Login</h2>
+
+		@if(errorMessage()) {
+            <div class="login-error">
+                {{ errorMessage() }}
+            </div>
+        }
+		<div class="login-form">
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>Username</mat-label>
+				<input [formField]="loginForm.username" matInput autocomplete="username" />
+				<mat-icon matSuffix>person</mat-icon>
+				@for (error of loginForm.username().errors(); track error) {
+					<mat-error>{{ error.message }}</mat-error>
+				}
+			</mat-form-field>
+
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>Password</mat-label>
+				<input [formField]="loginForm.password" matInput type="password" autocomplete="current-password" />
+				<mat-icon matSuffix>lock</mat-icon>
+				@for (error of loginForm.password().errors(); track error) {
+					<mat-error>{{ error.message }}</mat-error>
+				}
+			</mat-form-field>
+
+			<button matButton="filled" class="login-button" (click)="submit()">
+                Sign in
+            </button>
+		</div>
+	</div>
+</div>

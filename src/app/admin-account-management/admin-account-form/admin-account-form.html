@@ -1,0 +1,47 @@
+<mat-card class="form-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Admin Account</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Username</mat-label>
+      <input [formField]="adminForm.username" matInput>
+      @for (error of adminForm.username().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>First name</mat-label>
+      <input [formField]="adminForm.firstname" matInput>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Last name</mat-label>
+      <input [formField]="adminForm.lastname" matInput>
+      @for (error of adminForm.lastname().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Password</mat-label>
+      <input type="password" [formField]="adminForm.password" matInput>
+      @for (error of adminForm.password().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Confirm Password</mat-label>
+      <input type="password" [formField]="adminForm.confirmPassword" matInput>
+      @for (error of adminForm.confirmPassword().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-card-actions [align]="'end'">
+      <button matButton="filled" (click)="submit()">Create</button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

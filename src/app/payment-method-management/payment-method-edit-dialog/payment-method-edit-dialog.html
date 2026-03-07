@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Edit Payment Method</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input [formField]="paymentMethodForm.name" matInput placeholder="Payment method names">
+      @for (error of paymentMethodForm.name().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton="outlined" (click)="closeDialog()">Cancel</button>
+  <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+</mat-dialog-actions>

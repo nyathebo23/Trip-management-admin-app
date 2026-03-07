@@ -1,0 +1,23 @@
+<mat-card class="form-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>City creation</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Name</mat-label>
+      <input [formField]="cityForm.name" matInput placeholder="Name of the city">
+      @for (error of cityForm.name().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+    <mat-card-actions>
+      <button matButton="filled" (click)="submit()">Create</button>
+    </mat-card-actions>
+  </mat-card-content>
+
+</mat-card>
