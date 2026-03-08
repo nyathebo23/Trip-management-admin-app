@@ -11,9 +11,8 @@ import { CustomerManagement } from './customer-management/customer-management/cu
 import { AdminAccountManagement } from './admin-account-management/admin-account-management/admin-account-management';
 import { TravelTicketManagement } from './travel-ticket-management/travel-ticket-management/travel-ticket-management';
 import { TicketRefundManagement } from './ticket-refund-management/ticket-refund-management/ticket-refund-management';
-import { TravelsDepartAgency } from './travel-management/travels-depart-agency/travels-depart-agency';
-import { ScheduleTravelsPage } from './travel-management/schedule-travels-page/schedule-travels-page';
-import { TravelCreateByBatch } from './travel-management/travel-create-by-batch/travel-create-by-batch';
+import { TravelManagementPage } from './travel-management/travel-management-page/travel-management-page';
+
 
 export const routes: Routes = [
     {
@@ -27,7 +26,7 @@ export const routes: Routes = [
             {path: 'payment-method', component: PaymentMethodManagement},
             {path: 'bus-driver', component: BusDriverManagement},
             {path: 'customer', component: CustomerManagement},
-            {path: 'travel', component: TravelCreateByBatch},
+            {path: 'travel', component: TravelManagementPage},
             {path: 'admin-account', component: AdminAccountManagement},
             {path: 'ticket', component: TravelTicketManagement},
             {path: 'refund', component: TicketRefundManagement},

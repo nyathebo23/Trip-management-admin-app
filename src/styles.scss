@@ -88,6 +88,12 @@ mat-form-field {
   width: 100%;
 }
 
+.col-80 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 80%;
+}
+
 .col-70 {
     display: flex; 
     flex-direction: column; 
@@ -116,4 +122,21 @@ mat-form-field {
     display: flex; 
     flex-direction: column; 
     flex: 30%;
+}
+
+.col-20 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 20%;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;  
+  gap: 16px;        
+}
+
+.form-row mat-form-field {
+  flex: 1 1 200px;   
+  min-width: 150px;  
 }

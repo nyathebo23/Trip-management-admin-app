@@ -18,8 +18,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
 import { DatePipe } from '@angular/common';
-import { futureDateConstraint, rangeDateValidity } from '../../utils/validation-rules';
+import { futureDateConstraint, rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
 import { TravelCreateBatchData } from '../interfaces/travel-create-batch-data';
 import {MatStepperModule} from '@angular/material/stepper';
 import { WeekDays } from '../enums/week-days';
@@ -30,7 +32,7 @@ import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
   imports: [MatPaginatorModule, MatTableModule, MatFormFieldModule, MatDatepickerModule, MatFormFieldModule, 
   FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule, MatCheckboxModule,
   MatSelect, MatOption, FormField, MatTimepickerModule, MatInputModule, MatStepperModule,
-  MatChipsModule],    
+  MatChipsModule, MatButtonToggleModule],    
   templateUrl: './travel-create-by-batch.html',
   styleUrl: './travel-create-by-batch.scss',
 })
@@ -46,30 +48,34 @@ export class TravelCreateByBatch {
     days: []
   });
   weekDays = [
-    { day: WeekDays.MONDAY, checked: false, label: "Monday"},
-    { day: WeekDays.TUESDAY, checked: false, label: "Tuesday"},
-    { day: WeekDays.WEDNESDAY, checked: false, label: "Wednesday"},
-    { day: WeekDays.THURSDAY, checked: false, label: "Thursday"},
-    { day: WeekDays.FRIDAY, checked: false, label: "Friday"},
-    { day: WeekDays.SATURDAY, checked: false, label: "Saturday"},
-    { day: WeekDays.SUNDAY, checked: false, label: "Sunday"}
+    { day: WeekDays.MONDAY,  label: "Monday"},
+    { day: WeekDays.TUESDAY,  label: "Tuesday"},
+    { day: WeekDays.WEDNESDAY,  label: "Wednesday"},
+    { day: WeekDays.THURSDAY,  label: "Thursday"},
+    { day: WeekDays.FRIDAY,  label: "Friday"},
+    { day: WeekDays.SATURDAY,  label: "Saturday"},
+    { day: WeekDays.SUNDAY,  label: "Sunday"}
   ];
-
-  timeModel = signal({
-    time: new Date()
+   
+  timeModel = signal<{ time: Date | null }>({
+    time: null
   });
 
   readonly travelTimes = signal<string[]>([]);
 
-  updateCheck(checked: boolean, index: number) {
-    this.weekDays[index].checked = checked;
-  }
 
   addTime() {
     const timeData = this.timeModel().time;
-    if (this.travelTimes().indexOf(timeData.toLocaleTimeString()) >= 0)
+    if (timeData == null || this.travelTimes().indexOf(this.formatTime(timeData)) >= 0)
       return;
-    this.travelTimes.update(times => [...times, timeData.toLocaleTimeString()])
+    this.travelTimes.update(times => [...times, this.formatTime(timeData)]);
+    this.timeForm().reset();
+  }
+
+  formatTime(time: Date) {
+    const hours = time.getHours().toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   removeTime(timeToRemove: string) {
@@ -78,7 +84,8 @@ export class TravelCreateByBatch {
       if (index < 0) {
         return times;
       }
-      return times.splice(index, 1);
+      times.splice(index, 1);
+      return times;
     })
   }
 
@@ -94,12 +101,17 @@ export class TravelCreateByBatch {
     required(schema.departAgencyId, {message: 'Departure agency is required'}); 
     required(schema.arrivalAgencyId, {message: 'Arrival agency is required'});
     required(schema.startDate, {message: 'Start date is required'});
+    validateDatetime(schema.startDate, {message: 'Start date has invalid format'});
     required(schema.endDate, {message: 'End date is required'});
+    validateDatetime(schema.endDate, {message: 'End date has invalid format'});
     rangeDateValidity(schema.startDate, schema.endDate)
     futureDateConstraint(schema.startDate)
   });
 
-  timeForm = form(this.timeModel);
+  timeForm = form(this.timeModel, (schema) => {
+    required(schema.time, {message: 'This field is required'});
+    validateDatetime(schema.time, {message: 'Invalid time format'});
+  });
 
   submit() { 
     const travelData = this.travelModel();
@@ -113,6 +125,7 @@ export class TravelCreateByBatch {
       this.errorMessage.set("You can't travel within the same city"); 
       return;
     }
+    travelData.travelHours = this.travelTimes();
     this.travelService.saveBatch(travelData)
     .subscribe({ 
       next: (resp) => {

@@ -16,9 +16,6 @@
         </mat-option>
         }
       </mat-select>
-        @for (error of travelForm.departAgencyId().errors(); track error) {
-        <mat-error>{{ error.message }}</mat-error>
-        }
       <mat-hint>&nbsp;</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -30,9 +27,6 @@
         </mat-option>
         }
       </mat-select>
-        @for (error of travelForm.arrivalAgencyId().errors(); track error) {
-        <mat-error>{{ error.message }}</mat-error>
-        }
       <mat-hint>&nbsp;</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -41,7 +35,7 @@
         <mat-option [value]="null"></mat-option>
         @for (bus of data.buses; track bus) {
         <mat-option [value]="bus.id">
-            {{ bus.brand + ' - ' + bus.serialNumber }}
+            {{ bus.toString() }}
         </mat-option>
         }
        </mat-select>
@@ -53,7 +47,7 @@
         <mat-option [value]="null"></mat-option>
         @for (driver of data.busDrivers; track driver) {
         <mat-option [value]="driver.id">
-            {{ driver.user.lastname + ' ' + driver.user.firstname }}
+            {{ driver.toString() }}
         </mat-option>
         }
       </mat-select>
@@ -67,9 +61,9 @@
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
-                 @for (error of travelForm.plannedDepartDatetime().errors(); track error) {
+                  @for (error of travelForm.plannedDepartDatetime().errors(); track error) {
                     <mat-error>{{ error.message }}</mat-error>
-                 }
+                  }
             </mat-form-field>
         </div>
         <div class="col-50">

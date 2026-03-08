@@ -16,7 +16,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { Agency } from '../../models/agency';
 import { Bus } from '../../models/bus';
 import { BusDriver } from '../../models/bus-driver';
-import { futureDateConstraint } from '../../utils/validation-rules';
+import { futureDateConstraint, validateDatetime } from '../../utils/validation-rules';
 
 @Component({
   selector: 'app-travel-form',
@@ -46,7 +46,8 @@ export class TravelForm {
     required(schema.departAgencyId, {message: 'Departure agency is required'}); 
     required(schema.arrivalAgencyId, {message: 'Arrival agency is required'});
     required(schema.plannedDepartDatetime, {message: 'Departure datetime is required'});
-    futureDateConstraint(schema.plannedDepartDatetime)
+    futureDateConstraint(schema.plannedDepartDatetime),
+    validateDatetime(schema.plannedDepartDatetime, {message: 'Invalid date or time format'});
   });
 
   submit() { 

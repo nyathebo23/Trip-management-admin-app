@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialog } from '../../global/confirm-delete-dialog/confirm-delete-dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TravelService } from '../../services/travel-service';
 import { TravelType } from '../enums/travel-type';
 import { ITravel } from '../interfaces/travel';
@@ -27,11 +26,13 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TravelState } from '../enums/travel-state';
 import { MatInputModule } from '@angular/material/input';
+import { range } from 'rxjs';
+import { rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
 
 @Component({
   selector: 'app-schedule-travels-table',
   imports: [MatPaginatorModule, MatTableModule, MatDatepickerModule, MatFormFieldModule, 
-    FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule, MatCheckboxModule,
+    FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule,
   MatSelect, MatOption, FormField, MatTimepickerModule, MatInputModule, DatePipe],
   templateUrl: './schedule-travels-table.html',
   styleUrl: './schedule-travels-table.scss',
@@ -54,8 +55,10 @@ export class ScheduleTravelsTable {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.reqParamsForm.departAgency!().setControlValue(this.agencies().at(0)!.id);
-    this.getDatasTravels();
+    if (this.agencies().length > 0) {
+      this.reqParamsForm.departAgency!().controlValue.set(this.agencies().at(0)!.id);
+      this.getDatasTravels();
+    }
   }
   
   readonly deleteDialog = inject(MatDialog);
@@ -70,31 +73,33 @@ export class ScheduleTravelsTable {
     {label: 'ONGOING', value: TravelState.ONGOING}, 
     {label: 'END', value: TravelState.END}
   ];
-  startDatetime!: Date;
-  endDatetime!: Date;
 
-  reqParamsModel = signal({
+  reqParamsModel = signal<TravelQuery>({
+    startDatetime: null,
+    endDatetime: null,
     travelType: TravelType.CLASSIC,
     departAgency: ''
   });
 
   reqParamsForm = form(this.reqParamsModel, (schema) => {
     required(schema.departAgency!, {message: 'You must choose depart agency'});
+    validateDatetime(schema.startDatetime, {message: 'Start time has invalid format'});
+    validateDatetime(schema.endDatetime, {message: 'End time has invalid format'});
+    rangeDateValidity(schema.startDatetime, schema.endDatetime);
   });
 
   getDatasTravels() {
     const reqParams = new HttpParams();
-    if (this.startDatetime >= this.endDatetime) {
-
-    }
     let params = this.reqParamsModel();
 
-    if (this.startDatetime)
-      reqParams.set("startDateTime", this.datePipe.transform(this.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
-    if (this.endDatetime)
-      reqParams.set("endDateTime", this.datePipe.transform(this.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
+    if (params.startDatetime)
+      reqParams.set("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
+    if (params.endDatetime)
+      reqParams.set("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     reqParams.set("pageNumber", this.pageIndex);
     reqParams.set("pageSize", this.pageSize);
+    reqParams.set("travelType", params.travelType);
+
     this.isLoading.set(true);
     
     this.travelService.getFutureTravelsByDepartAgencyId(params.departAgency! , reqParams)

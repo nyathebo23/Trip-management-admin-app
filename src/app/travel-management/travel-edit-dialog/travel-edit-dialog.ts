@@ -16,6 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TravelData } from '../interfaces/travel-data';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../utils/response';
+import { futureDateConstraint, validateDatetime } from '../../utils/validation-rules';
 
 @Component({
   selector: 'app-travel-edit-dialog',
@@ -49,6 +50,9 @@ export class TravelEditDialog {
     required(schema.departAgencyId, {message: 'Departure agency is required'}); 
     required(schema.arrivalAgencyId, {message: 'Arrival agency is required'});
     required(schema.plannedDepartDatetime, {message: 'Departure datetime is required'});
+    futureDateConstraint(schema.plannedDepartDatetime),
+    validateDatetime(schema.plannedDepartDatetime, {message: 'Invalid date or time format'});
+
   });
 
   closeDialog() {

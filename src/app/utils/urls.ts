@@ -1,4 +1,4 @@
-export const baseUrl = "http://127.0.0.1:5062/";
+export const baseUrl = "http://192.168.1.164:5062/";
 
 export const cityReqUrl = baseUrl + "api/cities/";
 export const paymentMethodReqUrl = baseUrl + "api/paymentmethods/";

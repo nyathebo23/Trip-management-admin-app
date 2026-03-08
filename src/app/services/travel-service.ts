@@ -30,7 +30,7 @@ export class TravelService {
     }
 
     getTravelsCityToCity(reqParams: HttpParams): Observable<TravelsPagedResp> {
-        return this.httpClient.get<TravelsPagedResp>(travelReqUrl + 'city-to-city', {
+        return this.httpClient.get<TravelsPagedResp>(travelReqUrl + 'city-city', {
             params: reqParams
         });
     }

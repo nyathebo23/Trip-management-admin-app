@@ -160,3 +160,17 @@ export function rangeDateValidity(startDatePath: SchemaPath<Date | null>,
     return null;
   });
 }
+
+export function validateDatetime(path: SchemaPath<Date | null>, options?: { message?: string }) {
+  validate(path, ({ value }) => {
+    const v = value();
+    if (v == null) return null;
+    if (isNaN(v.getTime())) {
+      return {  
+        kind: 'validateDatetime',
+        message: options?.message || 'Date or time invalid'
+      };
+    } 
+    return null;
+  });
+}

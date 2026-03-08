@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal, ViewChild } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { catchError, map, of } from 'rxjs';
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { getErrorMessage, getErrorType, ResponseState } from '../../utils/response';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +12,6 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TravelService } from '../../services/travel-service';
 import { TravelType } from '../enums/travel-type';
-import { ITravel } from '../interfaces/travel';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -27,7 +25,8 @@ import { City } from '../../models/city';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatInputModule } from '@angular/material/input';
-import { rangeDateValidity } from '../../utils/validation-rules';
+import { rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
+import { TravelQuery } from '../interfaces/travel-query';
 
 @Component({
   selector: 'app-travels-city-city',
@@ -57,7 +56,11 @@ export class TravelsCityCity {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.getDatasTravels();
+    if (this.cities().length >= 2) {
+      this.reqParamsForm.fromCity!().controlValue.set(this.cities().at(0)!.id);
+      this.reqParamsForm.toCity!().controlValue.set(this.cities().at(1)!.id);
+      this.getDatasTravels();
+    }
   }
   
   readonly deleteDialog = inject(MatDialog);
@@ -74,7 +77,7 @@ export class TravelsCityCity {
   ];
 
 
-  reqParamsModel = signal({
+  reqParamsModel = signal<TravelQuery>({
     startDatetime: null,
     endDatetime: null,
     notYetStarted: true,
@@ -86,6 +89,8 @@ export class TravelsCityCity {
   reqParamsForm = form(this.reqParamsModel, (schema) => {
     required(schema.fromCity!, {message: 'You must choose depart city'});
     required(schema.toCity!, {message: 'You must choose arrival city'});
+    validateDatetime(schema.startDatetime, {message: 'Start time has invalid format'});
+    validateDatetime(schema.endDatetime, {message: 'End time has invalid format'});
     rangeDateValidity(schema.startDatetime, schema.endDatetime);
   });
 
@@ -93,15 +98,16 @@ export class TravelsCityCity {
     const reqParams = new HttpParams();
     let params = this.reqParamsModel();
 
-    reqParams.set('fromCity', params.fromCity);
-    reqParams.set('toCity', params.toCity);
+    reqParams.set('fromCity', params.fromCity!);
+    reqParams.set('toCity', params.toCity!);
     if (params.startDatetime)
       reqParams.set("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     if (params.endDatetime)
       reqParams.set("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     reqParams.set("pageNumber", this.pageIndex);
     reqParams.set("pageSize", this.pageSize);
-    reqParams.set("notYetStarted", params.notYetStarted);
+    reqParams.set("notYetStarted", params.notYetStarted!);
+    reqParams.set("travelType", params.travelType);
     this.isLoading.set(true);
     
     this.travelService.getTravelsCityToCity(reqParams)

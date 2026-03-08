@@ -1,4 +1,4 @@
-<mat-card class="form-card" appearance="outlined">
+<mat-card class="form-card" appearance="outlined" style="margin: 10px;">
   <mat-card-header>
     <mat-card-title>Schedule travel</mat-card-title>
   </mat-card-header>
@@ -15,9 +15,6 @@
                     </mat-option>
                     }
                 </mat-select>
-                    @for (error of travelForm.departAgencyId().errors(); track error) {
-                    <mat-error>{{ error.message }}</mat-error>
-                    }
                 <mat-hint>&nbsp;</mat-hint>
             </mat-form-field>
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -29,31 +26,29 @@
                     </mat-option>
                     }
                 </mat-select>
-                    @for (error of travelForm.arrivalAgencyId().errors(); track error) {
-                    <mat-error>{{ error.message }}</mat-error>
-                    }
                 <mat-hint>&nbsp;</mat-hint>
             </mat-form-field>
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>Date range</mat-label>
-                    <mat-date-range-input [rangePicker]="rangeDatePicker">
-                        <input matStartDate placeholder="Start date" [formField]="travelForm.startDate">
-                        <input matEndDate placeholder="End date" [formField]="travelForm.endDate">
-                    </mat-date-range-input>
-                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="rangeDatePicker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #rangeDatePicker></mat-date-range-picker>
+                <mat-label>Date range</mat-label>
+                <mat-date-range-input [rangePicker]="rangeDatePicker">
+                    <input matStartDate placeholder="Start date" [formField]="travelForm.startDate">
+                    <input matEndDate placeholder="End date" [formField]="travelForm.endDate">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="rangeDatePicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #rangeDatePicker></mat-date-range-picker>
+                @for (error of travelForm.startDate().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                }
+            
+                @for (error of travelForm.endDate().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                }
+                
             </mat-form-field>
-            @for (error of travelForm.startDate().errors(); track error) {
-                <mat-error>{{ error.message }}</mat-error>
-            }
-            @for (error of travelForm.endDate().errors(); track error) {
-                <mat-error>{{ error.message }}</mat-error>
-            }
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Travel type</mat-label>
                 <mat-select [formField]="travelForm.travelType">
-                    <mat-option [value]="null"></mat-option>
                     @for (travelType of travelTypes; track travelType) {
                     <mat-option [value]="travelType.value">
                         {{ travelType.label }}
@@ -68,36 +63,43 @@
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Choose days</ng-template>
-            <div>
-                <ul>
-                @for (weekday of weekDays; track weekday; let i = $index) {
-                    <li>
-                    <mat-checkbox [checked]="weekday.checked" (change)="updateCheck($event.checked, i)">
-                        {{ weekday.label }}
-                    </mat-checkbox>
-                    </li>
-                }
-                </ul>
-            </div>
+            <mat-button-toggle-group
+                [formField]="travelForm.days"
+                vertical="true"
+                aria-label="Week days"
+                multiple
+            >
+            @for (weekday of weekDays; track weekday) {
+                <mat-button-toggle [value]="weekday.day"> {{ weekday.label }} </mat-button-toggle>
+            }
+            </mat-button-toggle-group>
+
             <div>
                 <button matButton matStepperPrevious>Back</button>
                 <button matButton matStepperNext>Next</button>
             </div>
         </mat-step>
         <mat-step>
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Time</mat-label>
-                <input matInput  [matTimepicker]="picker">
-                <mat-timepicker-toggle matIconSuffix [for]="picker"/>
-                <mat-timepicker #picker/>
-                <mat-hint>&nbsp;</mat-hint>
-            </mat-form-field>
-            @for (error of timeForm.time().errors(); track error) {
-                <mat-error>{{ error.message }}</mat-error>
-            }
-            <button matFab (click)="addTime()">
-                <mat-icon>plus</mat-icon>
-            </button>
+            <ng-template matStepLabel>Take times travels</ng-template>
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-80" style="margin-right: 20px;">
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label>Time</mat-label>
+                        <input matInput [formField]="timeForm.time" [matTimepicker]="picker">
+                        <mat-timepicker-toggle matIconSuffix [for]="picker"/>
+                        <mat-timepicker #picker/>
+                        <mat-hint>&nbsp;</mat-hint>
+                        @for (error of timeForm.time().errors(); track error) {
+                            <mat-error>{{ error.message }}</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+                <div class="col-20">
+                    <button matMiniFab [disabled]="timeForm.time().invalid() || travelTimes.length > 30"  (click)="addTime()">
+                        <mat-icon>add_circle</mat-icon>
+                    </button>
+                </div>
+            </div>
             <mat-chip-grid #reactiveChipGrid aria-label="Enter reactive form keywords" >
             @for (time of travelTimes(); track time) {
                 <mat-chip-row (removed)="removeTime(time)">

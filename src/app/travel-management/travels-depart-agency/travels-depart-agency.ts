@@ -9,7 +9,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialog } from '../../global/confirm-delete-dialog/confirm-delete-dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TravelService } from '../../services/travel-service';
 import { TravelType } from '../enums/travel-type';
 import { ITravel } from '../interfaces/travel';
@@ -28,13 +27,13 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TravelState } from '../enums/travel-state';
 import { MatInputModule } from '@angular/material/input';
-import { rangeDateValidity } from '../../utils/validation-rules';
+import { rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
 
 
 @Component({
   selector: 'app-travels-depart-agency',
   imports: [MatPaginatorModule, MatTableModule, MatFormFieldModule, MatDatepickerModule, MatFormFieldModule, 
-    FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule, MatCheckboxModule,
+    FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule,
   MatSelect, MatOption, FormField, MatTimepickerModule, MatInputModule, DatePipe],
   templateUrl: './travels-depart-agency.html',
   styleUrl: './travels-depart-agency.scss',
@@ -58,7 +57,7 @@ export class TravelsDepartAgency {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.reqParamsForm.departAgency!().setControlValue(this.agencies().at(0)!.id);
+    this.reqParamsForm.departAgency!().controlValue.set(this.agencies().at(0)!.id);
     this.getDatasTravels();
   }
   
@@ -83,9 +82,9 @@ export class TravelsDepartAgency {
   });
 
   reqParamsForm = form(this.reqParamsModel, (schema) => {
-    required(schema.startDatetime, {message: 'Start date is required'});
-    required(schema.endDatetime, {message: 'End date is required'});
     rangeDateValidity(schema.startDatetime, schema.endDatetime);
+    validateDatetime(schema.startDatetime, {message: 'Start time has invalid format'});
+    validateDatetime(schema.endDatetime, {message: 'End time has invalid format'});
     required(schema.departAgency!, {message: 'You must choose depart agency'});
   });
 
@@ -100,6 +99,7 @@ export class TravelsDepartAgency {
       reqParams.set("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     reqParams.set("pageNumber", this.pageIndex);
     reqParams.set("pageSize", this.pageSize);
+    reqParams.set("travelType", params.travelType);
     this.isLoading.set(true);
     
     this.travelService.getCurrOrPastTravelsByDepartAgencyId(params.departAgency! , reqParams)

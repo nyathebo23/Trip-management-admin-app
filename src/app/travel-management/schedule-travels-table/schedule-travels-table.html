@@ -2,33 +2,45 @@
     <div class="form-row">
         <mat-form-field appearance="outline">
             <mat-label>Start date</mat-label>
-            <input matInput [matDatepicker]="startdatepicker" [(ngModel)]="startDatetime">
+            <input matInput [matDatepicker]="startdatepicker" [formField]="reqParamsForm.startDatetime">
             <mat-datepicker #startdatepicker/>
             <mat-datepicker-toggle [for]="startdatepicker" matSuffix/>
+            @for (error of reqParamsForm.startDatetime().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+            }
         </mat-form-field>
+
         <mat-form-field appearance="outline">
             <mat-label>Start time</mat-label>
             <input matInput
                 [matTimepicker]="starttimepicker"
-                [(ngModel)]="startDatetime"
-                [ngModelOptions]="{updateOn: 'blur'}">
+                [formField]="reqParamsForm.startDatetime">
             <mat-timepicker #starttimepicker/>
             <mat-timepicker-toggle [for]="starttimepicker" matSuffix/>
+            @for (error of reqParamsForm.startDatetime().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+            }
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>End date</mat-label>
-            <input matInput [matDatepicker]="enddatepicker" [(ngModel)]="endDatetime">
+            <input matInput [matDatepicker]="enddatepicker" [formField]="reqParamsForm.endDatetime">
             <mat-datepicker #enddatepicker/>
             <mat-datepicker-toggle [for]="enddatepicker" matSuffix/>
+            @for (error of reqParamsForm.endDatetime().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+            }
+        
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>End time</mat-label>
             <input matInput
                 [matTimepicker]="endtimepicker"
-                [(ngModel)]="endDatetime"
-                [ngModelOptions]="{updateOn: 'blur'}">
+                [formField]="reqParamsForm.endDatetime">
             <mat-timepicker #endtimepicker/>
             <mat-timepicker-toggle [for]="endtimepicker" matSuffix/>
+            @for (error of reqParamsForm.endDatetime().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+            }
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Agency</mat-label>
@@ -52,7 +64,9 @@
             </mat-select>
             <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>
-        <button matButton="elevated" (click)="getDatasTravels()"> Validate </button>
+        <button matButton="elevated" [disabled]="reqParamsForm().invalid()" (click)="getDatasTravels()"> 
+            Validate 
+        </button>
     </div>
     @if(!isLoading()) {
     <mat-card>
