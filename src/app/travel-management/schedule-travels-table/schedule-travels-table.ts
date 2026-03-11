@@ -28,6 +28,7 @@ import { TravelState } from '../enums/travel-state';
 import { MatInputModule } from '@angular/material/input';
 import { range } from 'rxjs';
 import { rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-schedule-travels-table',
@@ -42,6 +43,7 @@ export class ScheduleTravelsTable {
   displayedColumns: string[] = ['Depart Agency', 'Arrival Agency', 'Travel type', 'Travel state',
      'Planned depart datetime', 'Driver', 'Bus', 'Options'];
   travelService = inject(TravelService);
+
   pageIndex = 0;         
   pageSize = 10;          
   totalTravels = 0;
@@ -51,16 +53,22 @@ export class ScheduleTravelsTable {
   buses = input.required<Bus[]>();
   busDrivers = input.required<BusDriver[]>();
   datePipe = inject(DatePipe);
-  dataSource = new MatTableDataSource<TravelDetails>([]);
+  dataSource = signal<TravelDetails[]>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
     if (this.agencies().length > 0) {
-      this.reqParamsForm.departAgency!().controlValue.set(this.agencies().at(0)!.id);
+      this.reqParamsForm.departAgency!().setControlValue(this.agencies().at(0)!.id);
       this.getDatasTravels();
     }
   }
-  
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.getDatasTravels();
+  }
+
   readonly deleteDialog = inject(MatDialog);
   readonly editDialog = inject(MatDialog);
   travelTypes = [
@@ -89,23 +97,23 @@ export class ScheduleTravelsTable {
   });
 
   getDatasTravels() {
-    const reqParams = new HttpParams();
-    let params = this.reqParamsModel();
 
+    const params = this.reqParamsModel();
+    let reqParams = new HttpParams()
+    .set("pageNumber", this.pageIndex)
+    .set("pageSize", this.pageSize)
+    .set("travelType", params.travelType);
     if (params.startDatetime)
-      reqParams.set("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
+      reqParams = reqParams.append("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     if (params.endDatetime)
-      reqParams.set("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
-    reqParams.set("pageNumber", this.pageIndex);
-    reqParams.set("pageSize", this.pageSize);
-    reqParams.set("travelType", params.travelType);
+      reqParams = reqParams.append("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
 
     this.isLoading.set(true);
     
     this.travelService.getFutureTravelsByDepartAgencyId(params.departAgency! , reqParams)
     .subscribe({
       next: (resp) => {
-        this.dataSource.data = resp.items.map((travel) => {
+        this.dataSource.set(resp.items.map((travel) => {
           return {
             id: travel.id,
             departAgency: this.getAgencyString(travel.departAgencyId),
@@ -117,14 +125,13 @@ export class ScheduleTravelsTable {
             plannedDepartDatetime: travel.plannedDepartDatetime,
             travelItem: travel
           }
-        });
+        }));
         this.totalTravels = resp.totalCount;
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err));
       }, 
       complete: () => {
-        this.dataSource.paginator = this.paginator;
         this.isLoading.set(false);
       }
     });
@@ -165,6 +172,11 @@ export class ScheduleTravelsTable {
         busDrivers: this.busDrivers()
       } 
     }); 
+  }
+
+  loadDatas() {
+    this.pageIndex = 0;
+    this.getDatasTravels();
   }
 
   performDelete(id: string) {}

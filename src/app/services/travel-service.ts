@@ -48,7 +48,7 @@ export class TravelService {
     }
 
     getTravelsByArrivalAgencyId(arrivalAgencyId: string, reqParams: HttpParams): Observable<TravelsPagedResp> {
-        return this.httpClient.get<TravelsPagedResp>(travelReqUrl + 'arrival-agency/' + arrivalAgencyId, {
+        return this.httpClient.get<TravelsPagedResp>(travelReqUrl + 'toagency/' + arrivalAgencyId, {
             params: reqParams
         });
     }

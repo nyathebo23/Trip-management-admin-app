@@ -1,7 +1,7 @@
 @if(state$ | async; as state) {
     @if (state.agencies.errorType == null && state.cities.errorType == null && 
     state.buses.errorType == null && state.cities.errorType == null) {
-      <mat-tab-group style="margin-top: 80px;">
+      <mat-tab-group style="margin-top: 60px;">
         <mat-tab label="Schedule travel">
           <ng-template matTabContent>
             <app-schedule-travels-page 
@@ -13,15 +13,15 @@
             </app-schedule-travels-page>
           </ng-template> 
         </mat-tab>
-        <mat-tab label="Current or past travels"> 
+        <mat-tab label="Travels by agencies"> 
           <ng-template matTabContent>
-            <app-travels-depart-agency
+            <app-travels-by-agency
               [agencies]="state.agencies.data!"
               [busDrivers]="state.drivers.data!"
               [buses]="state.buses.data!"
             >
 
-            </app-travels-depart-agency>
+            </app-travels-by-agency>
           </ng-template>
         </mat-tab>
         <mat-tab label="Create batch travels">

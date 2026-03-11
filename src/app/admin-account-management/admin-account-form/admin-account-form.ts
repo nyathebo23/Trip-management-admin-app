@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, output, Output, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,15 +12,20 @@ import { passwordsShouldmatch, requireDigit, requireLowercase, requireNonAlphanu
   shouldNotStartWithSpace, 
   minLength} from '../../utils/validation-rules';
 import { getErrorMessage } from '../../utils/response';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-admin-account-form',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, 
-    ReactiveFormsModule, FormField, MatAnchor],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, MatSnackBarModule,
+    ReactiveFormsModule, FormField, MatAnchor, MatProgressBarModule],
   templateUrl: './admin-account-form.html',
   styleUrl: './admin-account-form.scss',
 })
 export class AdminAccountForm {
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   adminAccountService = inject(AdminAccountService);
   adminModel = signal({ 
     firstname: '', 
@@ -29,6 +34,7 @@ export class AdminAccountForm {
     password: '',
     confirmPassword: ''
   });
+
   errorMessage = signal<string|null>(null);
 
   adminForm = form(this.adminModel, (schema) => { 
@@ -49,15 +55,28 @@ export class AdminAccountForm {
     passwordsShouldmatch(schema.confirmPassword, schema.password);
   });
 
+
   submit() { 
+    this.isSubmitting.set(true);
     this.adminAccountService.save(this.adminModel())
     .subscribe({ 
       next: () => {
         this.errorMessage.set(null);
+        this._snackBar.open("Admin created sucessfully", "Dismiss");
       }, 
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err)); 
-      }}); 
-    }
+        this.isSubmitting.set(false);
+      },
+      complete: () => {
+        this.isSubmitting.set(false);
+      }
+    }); 
+  }
+
+    
+  openSuccessSnackBar() {
+    this._snackBar.open("Admin created sucessfully");
+  }
 
 }

@@ -7,6 +7,9 @@
             {{ errorMessage() }}
         </div>
     }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <mat-form-field appearance="outline" style="width: 100%;">
       <mat-label>Name</mat-label>
       <input [formField]="cityForm.name" matInput placeholder="Placeholder">
@@ -17,5 +20,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button matButton="outlined" (click)="closeDialog()">Cancel</button>
-  <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+  <button matButton="filled" class="secondary" [disabled]="cityForm().invalid()" (click)="submit()">
+    Update
+</button>
 </mat-dialog-actions>

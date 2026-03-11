@@ -14,6 +14,8 @@ import { AgencyAgentService } from '../../services/agency-agent-service';
 import { IAgencyAgent } from '../interfaces/iagency-agent';
 import { IAgency } from '../../agency-management/interfaces/iagency';
 import { Agency } from '../../models/agency';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AgencyAgentEditDialog } from '../agency-agent-edit-dialog/agency-agent-edit-dialog';
 
 @Component({
   selector: 'app-agency-agent-table-list',
@@ -25,16 +27,24 @@ export class AgencyAgentTableList {
 
   displayedColumns: string[] = ['Username', 'Firstname', 'Lastname', 'Role', 'Agency', 'Options'];
   agencyAgentService = inject(AgencyAgentService);
+  private readonly _snackBar = inject(MatSnackBar);
+  readonly editDialog = inject(MatDialog);
   readonly deleteDialog = inject(MatDialog);
   agencies = input.required<Agency[]>();
-  agencyAgentsResp$ = this.agencyAgentService.getAll().pipe(
-    map(data => ({ data, errorType: null } satisfies ResponseState<IAgencyAgent[]>)),
-    catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
-  );
+  agencyAgentsResp$ = this.agencyAgentService.agencyAgentsResp$
 
   getAgency(id: string): string {
     const agency = this.agencies().find(a => a.id === id);
     return agency ? agency.toString() : 'Unknown';
+  }
+
+  editItem(agent: IAgencyAgent) {
+    this.editDialog.open(AgencyAgentEditDialog, {
+      data: {
+        agencyAgent: agent,
+        agencies: this.agencies
+      }
+    });
   }
 
   deleteItem(id: string) { 
@@ -42,13 +52,21 @@ export class AgencyAgentTableList {
       data: { 
         title: 'Delete agency agent', 
         entityName: 'Agency agent', 
-        confirmFn: this.performDelete, 
-        objectId: id 
+        deleteFunction: () => this.performDelete(id), 
       }
     }); 
   }
 
   performDelete(id: string) {
-
+    this.agencyAgentService.delete(id)
+    .subscribe({
+      next: () => {
+        this._snackBar.open("Agency agent deleted successfully", "Close");
+      },
+      error: (err) => {
+        console.log(err);
+        this._snackBar.open("Agency agent deletion failed", "Close");
+      }
+    });
   }
 }

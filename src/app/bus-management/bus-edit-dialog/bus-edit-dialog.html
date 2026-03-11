@@ -7,6 +7,9 @@
             {{ errorMessage() }}
         </div>
     }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Serial number</mat-label>
       <input [formField]="busForm.serialNumber" matInput>
@@ -34,5 +37,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button matButton="outlined" (click)="closeDialog()">Cancel</button>
-    <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+    <button matButton="filled" class="secondary" [disabled]="busForm().invalid()" (click)="submit()">
+      Update
+    </button>
 </mat-dialog-actions>

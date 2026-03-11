@@ -11,18 +11,24 @@ import { MatOption, MatSelect } from "@angular/material/select";
 import { getErrorMessage } from '../../utils/response';
 import { AgencyDialogData } from '../interfaces/agency-dialog-data';
 import { MatDivider } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-agency-edit-dialog',
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatDivider,
-    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSelect, MatOption],
+    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSelect, MatOption, 
+    MatProgressBarModule],
   templateUrl: './agency-edit-dialog.html',
   styleUrl: './agency-edit-dialog.scss',
 })
 export class AgencyEditDialog {
+
+  private readonly _snackBar = inject(MatSnackBar);
   readonly dialogRef = inject(MatDialogRef<AgencyEditDialog>);
   data = inject<AgencyDialogData>(MAT_DIALOG_DATA);
   errorMessage = signal<string|null>(null);
+  isSubmitting = signal(false);
   agencyService = inject(AgencyService);
   agencyModel = signal({ 
     locationDesc: this.data.agency.locationDesc || '', 
@@ -39,13 +45,19 @@ export class AgencyEditDialog {
   closeDialog() { this.dialogRef.close(); }
 
   submit() {
+    this.isSubmitting.set(true);
     this.agencyService.update(this.data.agency.id, this.agencyModel())
     .subscribe({ 
       next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Agency agent created successfully", "Close");
         this.dialogRef.close(true)
       }, 
-      error: (err: HttpErrorResponse) => this.errorMessage.set(getErrorMessage(err))
+      error: (err: HttpErrorResponse) => {
+        this.isSubmitting.set(true);
+        this.errorMessage.set(getErrorMessage(err))
+      }
     });
   }
 }

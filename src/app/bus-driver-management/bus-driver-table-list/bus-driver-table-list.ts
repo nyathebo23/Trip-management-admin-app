@@ -12,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BusDriverService } from '../../services/bus-driver-service';
 import { BusDriver } from '../../models/bus-driver';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bus-driver-table-list',
@@ -24,6 +25,8 @@ export class BusDriverTableList {
   displayedColumns: string[] = ['Username', 'Firstname', 'Lastname', 'Role', 'Options'];
   busDriverService = inject(BusDriverService);
   readonly deleteDialog = inject(MatDialog);
+  readonly editDialog = inject(MatDialog);
+  private readonly _snackBar = inject(MatSnackBar);
 
   busDriversResp$ = this.busDriverService.getAll().pipe(
     map(data => ({ data, errorType: null } satisfies ResponseState<BusDriver[]>)),
@@ -35,13 +38,20 @@ export class BusDriverTableList {
       data: { 
         title: 'Delete bus driver', 
         entityName: 'Bus Driver', 
-        confirmFn: this.performDelete, 
-        objectId: id 
+        deleteFunction: () => this.performDelete(id),
       }
     }); 
   }
 
   performDelete(id: string) {
-
+    this.busDriverService.delete(id)
+    .subscribe({
+      next: () => {
+        this._snackBar.open("Bus driver deleted successfully", "Close");
+      },
+      error: () => {
+        this._snackBar.open("Bus driver deletion failed", "Close");
+      }
+    });
   }
 }

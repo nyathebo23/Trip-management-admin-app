@@ -13,22 +13,26 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatD
 import { AgencyAgentUpdateData } from '../interfaces/agency-agent-update-data';
 import { AgencyAgentDialogData } from '../interfaces/agency-agent-dialog-data';
 import { MatDivider } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
   selector: 'app-agency-agent-edit-dialog',
   imports: [MatDialogContent, MatDialogActions, MatInputModule, MatFormFieldModule, ReactiveFormsModule, 
-    FormField, MatAnchor, MatSelect, MatOption, MatDivider, MatDialogTitle],
+    FormField, MatAnchor, MatSelect, MatOption, MatDivider, MatDialogTitle, MatProgressBarModule],
   templateUrl: './agency-agent-edit-dialog.html',
   styleUrl: './agency-agent-edit-dialog.scss',
 })
 export class AgencyAgentEditDialog {
   readonly dialogRef = inject(MatDialogRef<AgencyAgentEditDialog>);
+  private readonly _snackBar = inject(MatSnackBar);
   data = inject<AgencyAgentDialogData>(MAT_DIALOG_DATA);
+  isSubmitting = signal(false);
   agencyAgentService = inject(AgencyAgentService);
   agencyAgentModel = signal<AgencyAgentUpdateData>({ 
-    role: ROLE.AGENCYAGENT,
-    agencyId: ''
+    role: this.data.agencyAgent.user.role,
+    agencyId: this.data.agencyAgent.agencyId
   });
   roles = [{
     label: 'Agency Agent',
@@ -43,14 +47,18 @@ export class AgencyAgentEditDialog {
   });
 
   submit() { 
+    this.isSubmitting.set(true);
     this.agencyAgentService.update(this.data.agencyAgent.id, this.agencyAgentModel())
     .subscribe({ 
       next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Agency agent edited sucessfully", "Close");
         this.dialogRef.close();
       }, 
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err)); 
+        this.isSubmitting.set(false);
       }}); 
     }
     closeDialog() { this.dialogRef.close(); }

@@ -10,10 +10,12 @@ import { CityService } from '../../services/city-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../utils/response';
 import { CityData } from '../interfaces/city-data';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-city-form',
-  imports: [MatButtonModule, MatCardModule,
+  imports: [MatButtonModule, MatCardModule, MatProgressBarModule,
     FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule],
   templateUrl: './city-form.html',
   styleUrl: './city-form.scss',
@@ -21,6 +23,8 @@ import { CityData } from '../interfaces/city-data';
 export class CityForm {
 
   cityService  = inject(CityService)
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   errorMessage = signal<string | null>(null);
   cityModel = signal<CityData>({
     name: ''
@@ -32,12 +36,16 @@ export class CityForm {
   });
 
   submit() {
+    this.isSubmitting.set(true);
     this.cityService.save(this.cityModel()).subscribe({
-      next: (res) => {
+      next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("City created successfully", "Close");
       },
       error: (err: HttpErrorResponse) => {
           this.errorMessage.set(getErrorMessage(err));
+          this.isSubmitting.set(false);
       }
     });
   }

@@ -43,7 +43,7 @@
             }
         </mat-form-field>
         <mat-form-field appearance="outline">
-            <mat-label>Agency</mat-label>
+            <mat-label>Depart Agency</mat-label>
             <mat-select [formField]="reqParamsForm.departAgency!">
             @for (agency of agencies(); track agency) {
                 <mat-option [value]="agency.id">
@@ -64,16 +64,15 @@
             </mat-select>
             <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>
-        <button matButton="elevated" [disabled]="reqParamsForm().invalid()" (click)="getDatasTravels()"> 
+        <button matButton="elevated" [disabled]="reqParamsForm().invalid()" (click)="loadDatas()"> 
             Validate 
         </button>
     </div>
-    @if(!isLoading()) {
     <mat-card>
-        <mat-card-header>
+        <!-- <mat-card-header>
             <mat-card-title><h2>Travels List</h2></mat-card-title>
-        </mat-card-header>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 custom-header">
+        </mat-card-header> -->
+        <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 custom-header">
             <!-- Name Column -->
             <ng-container matColumnDef="Depart Agency">
                 <th mat-header-cell *matHeaderCellDef> Depart Agency </th>
@@ -138,15 +137,16 @@
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            <mat-paginator
-                [length]="totalTravels"
-                [pageSize]="pageSize"
-                [pageSizeOptions]="[5, 10, 20, 50]"
-                [pageIndex]="pageIndex"
-                showFirstLastButtons
-                aria-label="Select the page">
-            </mat-paginator>
         </table>
+        <mat-paginator
+            [length]="totalTravels"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            [pageIndex]="pageIndex"
+            (page)="onPageChange($event)"
+            showFirstLastButtons
+            aria-label="Select the page">
+        </mat-paginator>
     </mat-card>
-    }
+    
 </div>

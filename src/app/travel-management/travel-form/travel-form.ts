@@ -17,15 +17,19 @@ import { Agency } from '../../models/agency';
 import { Bus } from '../../models/bus';
 import { BusDriver } from '../../models/bus-driver';
 import { futureDateConstraint, validateDatetime } from '../../utils/validation-rules';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-travel-form',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, 
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatProgressBarModule,
     FormField, MatAnchor, MatSelect, MatOption, MatDatepickerModule, MatTimepickerModule],
   templateUrl: './travel-form.html',
   styleUrl: './travel-form.scss',
 })
 export class TravelForm {
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   travelService = inject(TravelService);
   travelModel = signal<TravelData>({ 
     departAgencyId: '',
@@ -62,13 +66,17 @@ export class TravelForm {
       this.errorMessage.set("You can't travel within the same city"); 
       return;
     }
+    this.isSubmitting.set(true);
     this.travelService.save(travelData)
     .subscribe({ 
       next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Travel created successfully", "Close");
       }, 
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err)); 
+        this.isSubmitting.set(false);
       }}); 
     }
 }

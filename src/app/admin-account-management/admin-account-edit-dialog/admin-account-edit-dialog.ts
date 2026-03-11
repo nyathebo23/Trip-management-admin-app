@@ -12,16 +12,20 @@ import { getErrorMessage } from '../../utils/response';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { IUser } from '../../authentication/interfaces/iuser';
 import { MatDivider } from '@angular/material/divider';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-admin-account-edit-dialog',
-  imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, 
+  imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatProgressBarModule,
     FormField, MatAnchor, MatDivider, MatDialogActions, MatDialogContent],
   templateUrl: './admin-account-edit-dialog.html',
   styleUrl: './admin-account-edit-dialog.scss',
 })
 export class AdminAccountEditDialog {
   readonly dialogRef = inject(MatDialogRef<AdminAccountEditDialog>);
+  private readonly _snackBar = inject(MatSnackBar);
+  isSubmitting = signal(false);
   data = inject<IUser>(MAT_DIALOG_DATA);
   adminAccountService = inject(AdminAccountService);
   adminModel = signal({ 
@@ -42,15 +46,22 @@ export class AdminAccountEditDialog {
   });
 
   submit() { 
+    this.isSubmitting.set(true);
     this.adminAccountService.update(this.data.id, this.adminModel())
-    .subscribe({ 
-      next: () => {
-        this.errorMessage.set(null);
-        this.dialogRef.close(true);
-      }, 
-      error: (err: HttpErrorResponse) => {
-        this.errorMessage.set(getErrorMessage(err)); 
-      }}); 
+      .subscribe({ 
+        next: () => {
+          this.errorMessage.set(null);
+          this._snackBar.open("Admin edited sucessfully");
+          this.dialogRef.close(true);
+        }, 
+        error: (err: HttpErrorResponse) => {
+          this.isSubmitting.set(false);
+          this.errorMessage.set(getErrorMessage(err)); 
+        },
+        complete: () => {
+          this.isSubmitting.set(false);
+        }
+      }); 
     }
 
     closeDialog() { this.dialogRef.close(); }

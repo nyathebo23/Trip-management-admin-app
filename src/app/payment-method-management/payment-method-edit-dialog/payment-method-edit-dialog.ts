@@ -12,17 +12,21 @@ import { getErrorMessage } from '../../utils/response';
 import { PaymentMethodService } from '../../services/payment-method-service';
 import { PaymentMethod } from '../interfaces/payment-method';
 import { PaymentMethodData } from '../interfaces/payment-method-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-payment-method-edit-dialog',
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatDivider,
-    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule
+    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatProgressBarModule
   ],  
   templateUrl: './payment-method-edit-dialog.html',
   styleUrl: './payment-method-edit-dialog.scss',
 })
 export class PaymentMethodEditDialog {
   readonly dialogRef = inject(MatDialogRef<PaymentMethodEditDialog>);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   data = inject<PaymentMethod>(MAT_DIALOG_DATA);
   errorMessage = signal<string | null>(null);
   paymentMethodService  = inject(PaymentMethodService)
@@ -41,13 +45,17 @@ export class PaymentMethodEditDialog {
   }
 
   submit() {
+    this.isSubmitting.set(true);
     this.paymentMethodService.update(this.data.id, this.paymentMethodModel()).subscribe({
-      next: (res) => {
+      next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Payment method edited successfully", "Close");
         this.dialogRef.close(true);
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err));
+        this.isSubmitting.set(false);
       }
     });
   }

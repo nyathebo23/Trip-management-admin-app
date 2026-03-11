@@ -1,6 +1,6 @@
-import { Component, effect, inject } from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table'; 
+import { Component, inject } from '@angular/core';
+import { MatPaginatorModule} from '@angular/material/paginator';
+import { MatTableModule} from '@angular/material/table'; 
 import {AsyncPipe} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import { catchError, map, Observable, of } from 'rxjs';
@@ -27,30 +27,8 @@ export class CityTableList {
   cityService  = inject(CityService);
   readonly deleteDialog = inject(MatDialog);
   readonly editDialog = inject(MatDialog);
-  citiesResp$ = this.cityService.getAll().pipe(
-    map(data => ({
-      data,
-      errorType: null
-    } satisfies ResponseState<ICity[]>)),
+  citiesResp$ = this.cityService.citiesResp$;
 
-    catchError((err: HttpErrorResponse) =>
-      of({
-        data: null,
-        errorType: getErrorType(err)
-      })
-    )
-  );
-
-  deleteItem(id: string) {
-    this.deleteDialog.open(ConfirmDeleteDialog, {
-      data: {
-        title: 'Delete City',
-        entityName: 'City',
-        confirmFn: this.performDelete,          
-        objectId: id                         
-      }
-    });
-  }
 
   editItem(city: ICity) {
     this.editDialog.open(CityEditDialog, {
@@ -58,7 +36,4 @@ export class CityTableList {
     });
   }
 
-  performDelete(id: string) {
-
-  }
 }

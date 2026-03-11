@@ -12,6 +12,7 @@ import { ConfirmDeleteDialog } from '../../global/confirm-delete-dialog/confirm-
 import { PaymentMethodEditDialog } from '../payment-method-edit-dialog/payment-method-edit-dialog';
 import { PaymentMethod } from '../interfaces/payment-method';
 import { MatTableModule } from '@angular/material/table';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-payment-method-table-list',
@@ -20,19 +21,22 @@ import { MatTableModule } from '@angular/material/table';
   styleUrl: './payment-method-table-list.scss',
 })
 export class PaymentMethodTableList {
+
   displayedColumns: string[] = ['Name', 'Options'];
+  private readonly _snackBar = inject(MatSnackBar);
   paymentMethodService = inject(PaymentMethodService);
   readonly deleteDialog = inject(MatDialog);
   readonly editDialog = inject(MatDialog);
 
-  paymentMethodsResp$ = this.paymentMethodService.getAll().pipe(
-    map(data => ({ data, errorType: null } satisfies ResponseState<PaymentMethod[]>)),
-    catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
-  );
+  paymentMethodsResp$ = this.paymentMethodService.paymentMethodsResp$;
 
   deleteItem(id: string) {
     this.deleteDialog.open(ConfirmDeleteDialog, {
-      data: { title: 'Delete Payment Method', entityName: 'Payment method', confirmFn: this.performDelete, objectId: id }
+      data: { 
+        title: 'Delete Payment Method', 
+        entityName: 'Payment method', 
+        deleteFunction: () => this.performDelete(id), 
+      }
     });
   }
 
@@ -40,5 +44,15 @@ export class PaymentMethodTableList {
     this.editDialog.open(PaymentMethodEditDialog, { data: pm });
   }
 
-  performDelete(id: string) {}
+  performDelete(id: string) {
+    this.paymentMethodService.delete(id)
+    .subscribe({
+      next: () => {
+        this._snackBar.open("Agency deleted successfully", "Close");
+      },
+      error: () => {
+        this._snackBar.open("Agency deletion failed", "Close");
+      }
+    });
+  }
 }

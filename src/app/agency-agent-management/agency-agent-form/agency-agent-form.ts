@@ -14,17 +14,22 @@ import { AgencyAgentService } from '../../services/agency-agent-service';
 import { ROLE } from '../../utils/roles';
 import { MatOption, MatSelect } from "@angular/material/select";
 import { Agency } from '../../models/agency';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
   selector: 'app-agency-agent-form',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule,
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, MatProgressBarModule,
     ReactiveFormsModule, FormField, MatAnchor, MatSelect, MatOption],  
   templateUrl: './agency-agent-form.html',
   styleUrl: './agency-agent-form.scss',
 })
 export class AgencyAgentForm {
+  
   agencyAgentService = inject(AgencyAgentService);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   agencyAgentModel = signal({ 
     firstname: '', 
     lastname: '', 
@@ -63,13 +68,17 @@ export class AgencyAgentForm {
   });
 
   submit() { 
+    this.isSubmitting.set(true);
     this.agencyAgentService.save(this.agencyAgentModel())
     .subscribe({ 
       next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Agency agent created successfully", "Close");
       }, 
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err)); 
+        this.isSubmitting.set(false);
       }}); 
     }
 

@@ -8,7 +8,7 @@ import { getErrorMessage, getErrorType, ResponseState } from '../../utils/respon
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDeleteDialog } from '../../global/confirm-delete-dialog/confirm-delete-dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TravelService } from '../../services/travel-service';
 import { TravelType } from '../enums/travel-type';
@@ -27,12 +27,15 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatInputModule } from '@angular/material/input';
 import { rangeDateValidity, validateDatetime } from '../../utils/validation-rules';
 import { TravelQuery } from '../interfaces/travel-query';
+import { ITravel } from '../interfaces/travel';
+import { TravelEditDialog } from '../travel-edit-dialog/travel-edit-dialog';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-travels-city-city',
   imports: [MatPaginatorModule, MatTableModule, MatFormFieldModule, MatDatepickerModule, MatFormFieldModule, 
     FormsModule, ReactiveFormsModule, MatIconModule, MatButtonModule, MatCardModule, MatCheckboxModule,
-  MatSelect, MatOption, FormField, MatTimepickerModule, MatInputModule, DatePipe],  
+  MatSelect, MatOption, FormField, MatTimepickerModule, MatInputModule, DatePipe, MatButtonToggleModule],  
   templateUrl: './travels-city-city.html',
   styleUrl: './travels-city-city.scss',
   providers: [DatePipe],
@@ -52,13 +55,13 @@ export class TravelsCityCity {
   busDrivers = input.required<BusDriver[]>();
   cities = input.required<City[]>();
   datePipe = inject(DatePipe);
-  dataSource = new MatTableDataSource<TravelDetails>([]);
+  dataSource = signal<TravelDetails[]>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
     if (this.cities().length >= 2) {
-      this.reqParamsForm.fromCity!().controlValue.set(this.cities().at(0)!.id);
-      this.reqParamsForm.toCity!().controlValue.set(this.cities().at(1)!.id);
+      this.reqParamsForm.fromCity!().setControlValue(this.cities().at(0)!.id);
+      this.reqParamsForm.toCity!().setControlValue(this.cities().at(1)!.id);
       this.getDatasTravels();
     }
   }
@@ -75,7 +78,6 @@ export class TravelsCityCity {
     {label: 'ONGOING', value: TravelState.ONGOING}, 
     {label: 'END', value: TravelState.END}
   ];
-
 
   reqParamsModel = signal<TravelQuery>({
     startDatetime: null,
@@ -94,26 +96,32 @@ export class TravelsCityCity {
     rangeDateValidity(schema.startDatetime, schema.endDatetime);
   });
 
-  getDatasTravels() {
-    const reqParams = new HttpParams();
-    let params = this.reqParamsModel();
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.getDatasTravels();
+  }
 
-    reqParams.set('fromCity', params.fromCity!);
-    reqParams.set('toCity', params.toCity!);
+  getDatasTravels() {
+    const params = this.reqParamsModel();
+    let reqParams = new HttpParams()
+      .set('fromCity', params.fromCity!)
+      .set('toCity', params.toCity!)
+      .set("pageNumber", this.pageIndex)
+      .set("pageSize", this.pageSize)
+      .set("notYetStarted", params.notYetStarted!)
+      .set("travelType", params.travelType);
     if (params.startDatetime)
-      reqParams.set("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
+      reqParams = reqParams.append("startDateTime", this.datePipe.transform(params.startDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
     if (params.endDatetime)
-      reqParams.set("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
-    reqParams.set("pageNumber", this.pageIndex);
-    reqParams.set("pageSize", this.pageSize);
-    reqParams.set("notYetStarted", params.notYetStarted!);
-    reqParams.set("travelType", params.travelType);
+      reqParams = reqParams.append("endDateTime", this.datePipe.transform(params.endDatetime, 'yyyy-MM-ddTHH:mm:ss')!);
+
     this.isLoading.set(true);
     
     this.travelService.getTravelsCityToCity(reqParams)
     .subscribe({
       next: (resp) => {
-        this.dataSource.data = resp.items.map((travel) => {
+        this.dataSource.set(resp.items.map((travel) => {
           return {
             id: travel.id,
             departAgency: this.getAgencyString(travel.departAgencyId),
@@ -124,16 +132,16 @@ export class TravelsCityCity {
             travelType: this.travelTypes.find(travelTyp => travelTyp.value == travel.travelType)!.label,
             plannedDepartDatetime: travel.plannedDepartDatetime,
             effectiveDepartDatetime: travel.effectiveDepartDatetime,
-            arrivalDatetime: travel.arrivalDatetime          
+            arrivalDatetime: travel.arrivalDatetime,
+            travelItem: travel         
           }
-        });
+        }));
         this.totalTravels = resp.totalCount;
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err));
       }, 
       complete: () => {
-        this.dataSource.paginator = this.paginator;
         this.isLoading.set(false);
       }
     });
@@ -154,6 +162,17 @@ export class TravelsCityCity {
     return driver ? driver.toString() : 'unknown';
   }
 
+  editItem(item: ITravel) { 
+    this.editDialog.open(TravelEditDialog, { 
+      data: {
+        travelData: item,
+        agencies: this.agencies(),
+        buses: this.buses(),
+        busDrivers: this.busDrivers()
+      } 
+    }); 
+  }
+
   deleteItem(id: string) { 
     this.deleteDialog.open(ConfirmDeleteDialog, { 
       data: { 
@@ -165,6 +184,10 @@ export class TravelsCityCity {
     }); 
   }
 
+  loadDatas() {
+    this.pageIndex = 0;
+    this.getDatasTravels();
+  }
 
   performDelete(id: string) {}
 

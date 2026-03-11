@@ -4,8 +4,8 @@ import { WeekDays } from "../enums/week-days";
 export interface TravelCreateBatchData {
         departAgencyId: string;
         arrivalAgencyId: string;
-        startDate: Date,
-        endDate: Date,
+        startDate: string,
+        endDate: string,
         travelHours: string[],
         days: WeekDays[]
         travelType: TravelType

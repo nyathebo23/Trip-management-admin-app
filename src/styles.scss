@@ -47,6 +47,10 @@ th {
   }
 }
 
+mat-progress-bar {
+  margin-bottom: 10px;
+}
+
 .row {
     display: flex; 
     flex-direction: row;
@@ -100,11 +104,19 @@ mat-form-field {
     flex: 70%;
 }
 
+
+.col-65 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 65%;
+}
+
 .col-60 {
     display: flex; 
     flex-direction: column; 
     flex: 60%;
 }
+
 
 .col-50 {
     display: flex; 
@@ -116,6 +128,13 @@ mat-form-field {
     display: flex; 
     flex-direction: column; 
     flex: 40%;
+}
+
+
+.col-35 {
+    display: flex; 
+    flex-direction: column; 
+    flex: 35%;
 }
 
 .col-30 {
@@ -133,7 +152,8 @@ mat-form-field {
 .form-row {
   display: flex;
   flex-wrap: wrap;  
-  gap: 16px;        
+  gap: 16px;     
+  align-items: baseline;   
 }
 
 .form-row mat-form-field {

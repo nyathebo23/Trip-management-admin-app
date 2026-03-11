@@ -12,15 +12,21 @@ import { passwordsShouldmatch, requireDigit, requireLowercase, requireNonAlphanu
   minLength} from '../../utils/validation-rules';
 import { getErrorMessage } from '../../utils/response';
 import { BusDriverService } from '../../services/bus-driver-service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bus-driver-form',
-  imports: [MatCardModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, FormField, MatAnchor],
+  imports: [MatCardModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, FormField, MatAnchor,
+    MatProgressBarModule
+  ],
   templateUrl: './bus-driver-form.html',
   styleUrl: './bus-driver-form.scss',
 })
 export class BusDriverForm {
   busDriverService = inject(BusDriverService);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   busDriverModel = signal({ 
     firstname: '', 
     lastname: '', 
@@ -49,12 +55,16 @@ export class BusDriverForm {
   });
 
   submit() { 
+    this.isSubmitting.set(true);
     this.busDriverService.save(this.busDriverModel())
     .subscribe({ 
       next: () => {
+        this.isSubmitting.set(false);
         this.errorMessage.set(null);
+        this._snackBar.open("Bus driver created successfully", "Close");
       }, 
       error: (err: HttpErrorResponse) => {
+        this.isSubmitting.set(false);
         this.errorMessage.set(getErrorMessage(err)); 
       }}); 
     }

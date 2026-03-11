@@ -12,17 +12,23 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../utils/response';
 import { ICity } from '../interfaces/icity';
 import { CityData } from '../interfaces/city-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-city-edit-dialog',
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButtonModule, MatDivider,
-    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule
+    FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatProgressBarModule
   ],
   templateUrl: './city-edit-dialog.html',
   styleUrl: './city-edit-dialog.scss',
 })
 export class CityEditDialog {
+
   readonly dialogRef = inject(MatDialogRef<CityEditDialog>);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
+
   data = inject<ICity>(MAT_DIALOG_DATA);
   errorMessage = signal<string | null>(null);
   cityService  = inject(CityService)
@@ -34,18 +40,23 @@ export class CityEditDialog {
     required(schemaPath.name, {message: "City name is required"}),
     shouldNotStartWithSpace(schemaPath.name, {message: "City name shouldn't start with space"});
   });
+
   closeDialog() {
     this.dialogRef.close();
   }
 
   submit() {
+    this.isSubmitting.set(true);
     this.cityService.update(this.data.id, this.cityModel()).subscribe({
-      next: (res) => {
+      next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("City edited successfully", "Close");
         this.dialogRef.close(true);
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err));
+        this.isSubmitting.set(false);
       }
     });
   }

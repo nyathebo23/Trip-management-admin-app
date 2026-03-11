@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { form, FormField, required } from '@angular/forms/signals';
 import { MatAnchor } from '@angular/material/button';
@@ -17,17 +17,21 @@ import { TravelData } from '../interfaces/travel-data';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../utils/response';
 import { futureDateConstraint, validateDatetime } from '../../utils/validation-rules';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-travel-edit-dialog',
   imports: [MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSelect, MatOption,
     FormField, MatAnchor, MatDivider, MatDialogActions, MatDialogContent, MatDatepickerModule,
-   MatTimepickerModule, MatDialogTitle ],  
+   MatTimepickerModule, MatDialogTitle, MatProgressBarModule ],  
   templateUrl: './travel-edit-dialog.html',
   styleUrl: './travel-edit-dialog.scss',
 })
 export class TravelEditDialog {
   readonly dialogRef = inject(MatDialogRef<TravelEditDialog>);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
   data = inject<TravelUpdateDialogData>(MAT_DIALOG_DATA);
   travelService = inject(TravelService);
   travelModel = signal<TravelData>({ 
@@ -71,12 +75,16 @@ export class TravelEditDialog {
       this.errorMessage.set("You can't travel within the same city"); 
       return;
     }
+    this.isSubmitting.set(true);
     this.travelService.update(this.data.travelData.id, this.travelModel())
     .subscribe({ 
       next: () => {
+        this.isSubmitting.set(false);
         this.errorMessage.set(null);
+        this._snackBar.open("Travel edited successfully", "Close");
       }, 
       error: (err: HttpErrorResponse) => {
+        this.isSubmitting.set(false);
         this.errorMessage.set(getErrorMessage(err)); 
       }}); 
     }

@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { catchError, map, Observable, of } from "rxjs";
+import { isStringObject } from "util/types";
 
 export type ResponseState<T> = {
   data: T | null;
@@ -21,7 +22,8 @@ export function getErrorMessage(error: HttpErrorResponse): string {
       return error.error?.message || 'You have to be authenticated to perform this action !';
     }
     else if (error.status === 400) {
-      return error.error?.message || 'Invalid data provided !';
+      if (typeof error.error == 'string') return error.error;
+      return  error.error?.message || 'Invalid data provided !';
     }
       else if (error.status === 0) {
       return 'Unable to connect to the server. Please check your network connection and try again.';

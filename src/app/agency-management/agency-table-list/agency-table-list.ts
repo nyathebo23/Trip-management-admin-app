@@ -14,6 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { Agency } from '../../models/agency';
 import { ICity } from '../../city-management/interfaces/icity';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-agency-table-list',
@@ -27,11 +28,8 @@ export class AgencyTableList {
   cities = input.required<ICity[]>();
   readonly deleteDialog = inject(MatDialog);
   readonly editDialog = inject(MatDialog);
-
-  agenciesResp$ = this.agencyService.getAll().pipe(
-    map(data => ({ data, errorType: null } satisfies ResponseState<Agency[]>)),
-    catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
-  );
+  private readonly _snackBar = inject(MatSnackBar);
+  agenciesResp$ = this.agencyService.agenciesResp$;
 
   getCityName(cityId: string): string {
     const city = this.cities().find(c => c.id === cityId);
@@ -43,8 +41,7 @@ export class AgencyTableList {
       data: { 
         title: 'Delete Agency', 
         entityName: 'Agency', 
-        confirmFn: this.performDelete, 
-        objectId: id 
+        deleteFunction: () => this.performDelete(id), 
       } 
     });
   }
@@ -57,5 +54,15 @@ export class AgencyTableList {
     }); 
   }
 
-  performDelete(id: string) {}
+  performDelete(id: string) {
+    this.agencyService.delete(id)
+    .subscribe({
+      next: () => {
+        this._snackBar.open("Agency deleted successfully", "Close");
+      },
+      error: () => {
+        this._snackBar.open("Agency deletion failed", "Close");
+      }
+    });
+  }
 }

@@ -7,6 +7,9 @@
             {{ errorMessage() }}
         </div>
     }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
     <mat-label>Role</mat-label>
     <mat-select [formField]="agencyAgentForm.role">
@@ -21,7 +24,7 @@
     <mat-select [formField]="agencyAgentForm.agencyId">
       @for (agency of data.agencies; track agency) {
       <mat-option [value]="agency.id">
-          {{ agency.city + ', ' + agency.quarter + ' - ' + agency.locationDesc  }}
+          {{ agency.toString() }}
       </mat-option>
       }
     </mat-select>
@@ -31,5 +34,7 @@
 
 <mat-dialog-actions>
     <button matButton="outlined" (click)="closeDialog()">Cancel</button>
-    <button matButton="filled" class="secondary" (click)="submit()">Update</button>
+    <button matButton="filled" class="secondary" [disabled]="agencyAgentForm().invalid()" (click)="submit()">
+      Update
+    </button>
 </mat-dialog-actions>

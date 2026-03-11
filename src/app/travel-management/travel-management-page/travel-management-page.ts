@@ -13,13 +13,13 @@ import { CityService } from '../../services/city-service';
 import { City } from '../../models/city';
 import {MatTabsModule} from '@angular/material/tabs';
 import { ScheduleTravelsPage } from "../schedule-travels-page/schedule-travels-page";
-import { TravelsDepartAgency } from "../travels-depart-agency/travels-depart-agency";
+import { TravelsByAgency } from "../travels-by-agency/travels-by-agency";
 import { TravelsCityCity } from '../travels-city-city/travels-city-city';
 import { TravelCreateByBatch } from "../travel-create-by-batch/travel-create-by-batch";
 
 @Component({
   selector: 'app-travel-management-page',
-  imports: [MatTabsModule, AsyncPipe, ScheduleTravelsPage, TravelsDepartAgency, TravelsCityCity, TravelCreateByBatch],
+  imports: [MatTabsModule, AsyncPipe, ScheduleTravelsPage, TravelsByAgency, TravelsCityCity, TravelCreateByBatch],
   templateUrl: './travel-management-page.html',
   styleUrl: './travel-management-page.scss',
 })

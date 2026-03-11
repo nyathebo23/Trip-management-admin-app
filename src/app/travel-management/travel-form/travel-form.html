@@ -3,6 +3,14 @@
     <mat-card-title>Schedule travel</mat-card-title>
   </mat-card-header>
   <mat-card-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Depart Agency</mat-label>
       <mat-select [formField]="travelForm.departAgencyId">
@@ -82,7 +90,7 @@
         }
     </mat-form-field>
     <mat-card-actions [align]="'end'">
-      <button matButton="filled" (click)="submit()">Create</button>
+      <button matButton="filled" [disabled]="travelForm().invalid()" (click)="submit()">Create</button>
     </mat-card-actions>
   </mat-card-content>
 </mat-card>

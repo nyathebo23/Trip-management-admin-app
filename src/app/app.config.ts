@@ -1,12 +1,12 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, PLATFORM_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './authentication/services/interceptors/auth-interceptor';
-import { unauthorizedInterceptor } from './authentication/services/interceptors/unauthorized-interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [

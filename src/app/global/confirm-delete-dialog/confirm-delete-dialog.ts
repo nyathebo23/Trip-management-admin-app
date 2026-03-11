@@ -25,6 +25,6 @@ export class ConfirmDeleteDialog {
   }
 
   onConfirm() {
-    this.data.deleteFunction(this.data.objectId);
+    this.data.deleteFunction();
   }
 }

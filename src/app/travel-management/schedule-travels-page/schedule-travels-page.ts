@@ -16,5 +16,6 @@ export class ScheduleTravelsPage {
   agencies = input.required<Agency[]>();
   buses = input.required<Bus[]>();
   busDrivers = input.required<BusDriver[]>();
-
+  
+  
 }

@@ -1,7 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { form, FormField, required } from '@angular/forms/signals';
 import { shouldNotStartWithSpace } from '../../utils/validation-rules';
 import {MatCardModule} from '@angular/material/card';
@@ -11,18 +9,21 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../utils/response';
 import { PaymentMethodService } from '../../services/payment-method-service';
-import { PaymentMethod } from '../interfaces/payment-method';
 import { PaymentMethodData } from '../interfaces/payment-method-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-payment-method-form',
-  imports: [MatButtonModule, MatCardModule,
+  imports: [MatButtonModule, MatCardModule, MatProgressBarModule,
     FormField, MatInputModule, MatFormFieldModule, ReactiveFormsModule],
   templateUrl: './payment-method-form.html',
   styleUrl: './payment-method-form.scss',
 })
 export class PaymentMethodForm {
- errorMessage = signal<string | null>(null);
+  isSubmitting = signal(false);
+  private readonly _snackBar = inject(MatSnackBar);
+  errorMessage = signal<string | null>(null);
   paymentMethodService  = inject(PaymentMethodService)
   
   paymentMethodModel = signal<PaymentMethodData>({
@@ -36,12 +37,16 @@ export class PaymentMethodForm {
 
 
   submit() {
+    this.isSubmitting.set(true);
     this.paymentMethodService.save(this.paymentMethodModel()).subscribe({
-      next: (res) => {
+      next: () => {
         this.errorMessage.set(null);
+        this.isSubmitting.set(false);
+        this._snackBar.open("Payment method created successfully", "Close");
       },
       error: (err: HttpErrorResponse) => {
         this.errorMessage.set(getErrorMessage(err));
+        this.isSubmitting.set(false);
       }
     });
   }

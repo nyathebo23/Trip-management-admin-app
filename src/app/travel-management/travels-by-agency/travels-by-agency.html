@@ -31,9 +31,15 @@
             }
         <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>
+        <mat-button-toggle-group (change)="filterByDepartOrArrivalAgency()">
+    
+            <mat-button-toggle [checked]="filterByDepartAgency()" [value]="true"> Depart agency </mat-button-toggle>
+            <mat-button-toggle [checked]="!filterByDepartAgency()" [value]="false"> Arrival agency </mat-button-toggle>
+    
+        </mat-button-toggle-group>
         <mat-form-field appearance="outline">
             <mat-label>Agency</mat-label>
-            <mat-select [formField]="reqParamsForm.departAgency!">
+            <mat-select [formField]="reqParamsForm.agency!">
             @for (agency of agencies(); track agency) {
                 <mat-option [value]="agency.id">
                     {{ agency.toString() }}
@@ -42,6 +48,7 @@
             </mat-select>
             <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>
+
         <mat-form-field appearance="outline">
             <mat-label>Travel type</mat-label>
             <mat-select [formField]="reqParamsForm.travelType!">
@@ -53,16 +60,19 @@
             </mat-select>
             <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>
+        <mat-button-toggle-group [formField]="reqParamsForm.notYetStarted">
+            <mat-button-toggle [value]="false"> Travels Ongoing or ended </mat-button-toggle>
+            <mat-button-toggle [value]="true"> Travels Not yet started </mat-button-toggle>
+        </mat-button-toggle-group>
         <button matButton="elevated" [disabled]="reqParamsForm().invalid()" (click)="getDatasTravels()"> 
             Validate 
         </button>
     </div>
-    @if(!isLoading()) {
     <mat-card>
         <mat-card-header>
             <mat-card-title><h2>Travels List</h2></mat-card-title>
         </mat-card-header>
-        <table mat-table [dataSource]="dataSource!" class="mat-elevation-z8 custom-header">
+        <table mat-table [dataSource]="dataSource()" class="mat-elevation-z8 custom-header">
             <!-- Name Column -->
             <ng-container matColumnDef="Depart Agency">
                 <th mat-header-cell *matHeaderCellDef> Depart Agency </th>
@@ -119,28 +129,17 @@
                 <td mat-cell *matCellDef="let element"> {{element.bus}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="Options">
-                <th mat-header-cell *matHeaderCellDef> Options </th>
-                <td mat-cell *matCellDef="let element"> 
-                    <div class="icons-option-block">
-                        <button matMiniFab class="danger" (click)="deleteItem(element.id)" aria-label="Delete">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
-                </td>
-            </ng-container>
-
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            <mat-paginator
-                [length]="totalTravels"
-                [pageSize]="pageSize"
-                [pageSizeOptions]="[5, 10, 20, 50]"
-                [pageIndex]="pageIndex"
-                showFirstLastButtons
-                aria-label="Select page">
-            </mat-paginator>
         </table>
+        <mat-paginator
+            [length]="totalTravels"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            [pageIndex]="pageIndex"
+            showFirstLastButtons
+            (page)="onPageChange($event)"
+            aria-label="Select page">
+        </mat-paginator>
     </mat-card>   
-} 
 </div>
