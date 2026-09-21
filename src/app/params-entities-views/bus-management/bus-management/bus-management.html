@@ -1,0 +1,32 @@
+@if (busesDatas$ | async; as resp) {
+    @if (resp.buses.errorType == null && resp.busAudits.errorType == null) {
+        <div class="row">
+            <div class="body-box col-60">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title> Create new bus </mat-panel-title>
+                            <mat-panel-description>
+                                Click to expand create bus form
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <div class="flex justify-content-center">
+                            <app-bus-form></app-bus-form>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-bus-table-list [buses]="resp.buses.data!">
+                    
+                </app-bus-table-list>
+            </div>
+            <div class="col-40">
+                <app-audit-history
+                    [objectType]="'Bus'"
+                    [entityObjects]="resp.buses.data!"
+                    [entityAudits]="resp.busAudits.data!"
+                >
+                </app-audit-history>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,29 @@
+@if(busDriversDatas$ | async; as resp) {
+    @if (resp.busDrivers.errorType == null && resp.busDriverAudits.errorType == null) {
+        <div class="row">
+            <div class="body-box col-60">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title> Create new bus driver </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <div class="flex justify-content-center">
+                            <app-bus-driver-form></app-bus-driver-form>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-bus-driver-table-list [busDrivers]="resp.busDrivers.data!">
+                    
+                </app-bus-driver-table-list>
+            </div>
+            <div class="col-40">
+                <app-audit-history
+                    [objectType]="'Bus driver'"
+                    [entityObjects]="resp.busDrivers.data!"
+                    [entityAudits]="resp.busDriverAudits.data!"
+                >
+                </app-audit-history>
+            </div>
+        </div>
+    }
+}

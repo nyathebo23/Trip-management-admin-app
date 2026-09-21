@@ -2,6 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { refundReqUrl } from '../utils/urls';
+import { TicketRefundData } from '../functionnal-views/ticket-refund-management/interfaces/ticket-refund-data';
+import { TicketRefund } from '../functionnal-views/ticket-refund-management/interfaces/ticket-refund';
+import { TicketRefundExtended } from '../functionnal-views/ticket-refund-management/interfaces/ticket-refund-extended';
+import { TicketRefundPagedResp } from '../functionnal-views/ticket-refund-management/interfaces/ticket-refund-paged-resp';
 
 @Injectable({
 providedIn: 'root',
@@ -21,7 +25,11 @@ export class TicketRefundService {
         return this.httpClient.delete(refundReqUrl + id);
     }
 
-    getAll(): Observable<TicketRefund[]> {
-        return this.httpClient.get<TicketRefund[]>(refundReqUrl)
+    getAll(): Observable<TicketRefundPagedResp> {
+        return this.httpClient.get<TicketRefundPagedResp>(refundReqUrl)
+    }  
+
+    getAllByAgency(agencyId: string): Observable<TicketRefundPagedResp> {
+        return this.httpClient.get<TicketRefundPagedResp>(refundReqUrl + 'agency/' + agencyId)
     }    
 }

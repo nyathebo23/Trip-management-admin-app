@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Edit Travel path</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Distance</mat-label>
+      <input type="number" [formField]="travelPathForm.distance" matInput>
+        @for (error of travelPathForm.distance().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <div class="row">
+        <div class="col-50">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" style="margin-left: 10px">
+                <mat-label> Hours </mat-label>
+                <input type="number" [formField]="travelPathForm.estimatedTravelDuration.hours" matInput>
+                    @for (error of travelPathForm.estimatedTravelDuration.hours().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                <mat-hint>&nbsp;</mat-hint>
+            </mat-form-field>
+        
+        </div>
+        <div class="col-50">
+             <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label> Minutes </mat-label>
+                <input type="number" [formField]="travelPathForm.estimatedTravelDuration.minutes" matInput>
+                    @for (error of travelPathForm.estimatedTravelDuration.minutes().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                <mat-hint>&nbsp;</mat-hint>
+            </mat-form-field>
+         </div>
+    </div>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton="outlined" (click)="closeDialog()">Cancel</button>
+    <button matButton="filled" class="secondary" [disabled]="travelPathForm().invalid()" (click)="submit()">
+      Update
+    </button>
+</mat-dialog-actions>

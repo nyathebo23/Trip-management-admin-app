@@ -8,6 +8,7 @@ import { ROLE } from '../../utils/roles';
 import { USER_KEY } from '../../utils/constants';
 import { LoginData } from '../interfaces/login-data';
 import { LoginResponse } from '../interfaces/login-response';
+import { TokenService } from './token-service';
 
 
 interface JWTDataDecoded {
@@ -27,6 +28,7 @@ interface JWTDataDecoded {
 export class AuthService {
 
     private http = inject(HttpClient);
+    private tokenService = inject(TokenService);
 
     login(loginData: LoginData): Observable<LoginResponse> {
       return this.http.post<LoginResponse>(loginUrl, loginData);
@@ -48,5 +50,10 @@ export class AuthService {
     getUser(): IUser {
       const user: IUser = JSON.parse(window.sessionStorage.getItem(USER_KEY) || '{}');
       return user;
+    }
+
+    isAuthenticated(): boolean {
+      console.log(this.tokenService.getToken());
+      return this.tokenService.getToken() !== null;
     }
 }

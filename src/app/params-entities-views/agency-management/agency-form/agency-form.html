@@ -1,0 +1,44 @@
+<mat-card class="form-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Agency</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <mat-form-field appearance="outline">
+      <mat-label>Location description</mat-label>
+      <input [formField]="agencyForm.locationDesc" matInput>
+        @for (error of agencyForm.locationDesc().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Quarter</mat-label>
+      <input [formField]="agencyForm.quarter" matInput>
+        @for (error of agencyForm.quarter().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>City</mat-label>
+        <mat-select [formField]="agencyForm.cityId" matInput>
+        @for(city of cities(); track city) {
+            <mat-option  [value]="city.id">
+            {{ city.name }}
+            </mat-option>
+        }
+        </mat-select>
+    </mat-form-field>
+    <mat-card-actions>
+      <button matButton="filled" [disabled]="agencyForm().invalid()" (click)="submit()">
+        Create
+      </button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

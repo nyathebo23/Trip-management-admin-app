@@ -45,3 +45,18 @@ h1.layout-app-name {
   flex: 1 0 auto;
 }
 
+.active-link {
+  background-color: rgba(0, 0, 0, 0.08) !important;   /* Couleur de fond Material */
+  color: var(--mat-sys-primary) !important;           /* Couleur primaire */
+  font-weight: 500;
+
+  /* Optionnel : trait à gauche pour un look plus "Material" */
+  border-left: 4px solid var(--mat-sys-primary);
+  padding-left: 12px !important;
+}
+
+/* Pour améliorer le contraste sur l'item actif */
+mat-nav-list .mat-mdc-list-item.active-link {
+  --mdc-list-list-item-hover-label-text-color: var(--mat-sys-primary);
+  --mdc-list-list-item-focus-label-text-color: var(--mat-sys-primary);
+}

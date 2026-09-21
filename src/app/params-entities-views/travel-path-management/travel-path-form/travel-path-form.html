@@ -1,0 +1,73 @@
+<mat-card class="form-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Travel path</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Agency 1</mat-label>
+      <mat-select [formField]="travelPathForm.agency1Id">
+        @for (agency of agencies(); track agency) {
+        <mat-option [value]="agency.id">
+            {{ agency.toString()  }}
+        </mat-option>
+        }
+      </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Agency 2</mat-label>
+      <mat-select [formField]="travelPathForm.agency2Id">
+        @for (agency of agencies(); track agency) {
+        <mat-option [value]="agency.id">
+            {{ agency.toString()  }}
+        </mat-option>
+        }
+      </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Distance</mat-label>
+      <input type="number" [formField]="travelPathForm.distance" matInput>
+        @for (error of travelPathForm.distance().errors(); track error) {
+          <mat-error>{{ error.message }}</mat-error>
+        }
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <div class="row">
+        <div class="col-50">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" style="margin-right: 10px;">
+                <mat-label> Hours </mat-label>
+                <input type="number" [formField]="travelPathForm.estimatedTravelDuration.hours" matInput>
+                    @for (error of travelPathForm.estimatedTravelDuration.hours().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                <mat-hint>&nbsp;</mat-hint>
+            </mat-form-field>
+        
+        </div>
+        <div class="col-50">
+             <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label> Minutes </mat-label>
+                <input type="number" [formField]="travelPathForm.estimatedTravelDuration.minutes" matInput>
+                    @for (error of travelPathForm.estimatedTravelDuration.minutes().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                    }
+                <mat-hint>&nbsp;</mat-hint>
+            </mat-form-field>
+         </div>
+    </div>
+    <mat-card-actions [align]="'end'">
+      <button matButton="filled" (click)="submit()" [disabled]="travelPathForm().invalid()">
+        Create
+      </button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>

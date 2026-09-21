@@ -10,6 +10,7 @@ import { LoginData } from '../../interfaces/login-data';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TokenService } from '../../services/token-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class Login {
   private auth = inject(AuthService);
   private tokenService = inject(TokenService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginModel = signal<LoginData>({ username: '', password: '' });
 
@@ -39,7 +41,8 @@ export class Login {
         next: (res) => {
           this.auth.saveUser(res.token);
           this.tokenService.saveToken(res.token);
-          this.router.navigate(['/management/city']);
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/management/travel';
+          this.router.navigate([returnUrl]);
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 401) {

@@ -1,0 +1,16 @@
+<div class="row" style="margin-top: 10px;">
+    <div class="col-30 margin-h-10">
+        <app-travel-form [travelPaths]="travelPaths()" [buses]="buses()" [busDrivers]="busDrivers()">
+        </app-travel-form>
+    </div>
+    <div class="col-70 margin-h-10">
+        <app-schedule-travels-table 
+            [agencies]="agencies()" 
+            [buses]="buses()" 
+            [busDrivers]="busDrivers()"
+        >
+        </app-schedule-travels-table>
+    </div>
+</div>
+
+

@@ -1,0 +1,50 @@
+@if(state$ | async; as state) {
+    @if (state.agencies.errorType == null && state.cities.errorType == null && 
+    state.buses.errorType == null && state.cities.errorType == null) {
+      <mat-tab-group>
+        <mat-tab label="Schedule travel">
+          <ng-template matTabContent>
+            <app-schedule-travels-page 
+              [travelPaths]="state.travelPaths.data!"
+              [agencies]="state.agencies.data!"
+              [busDrivers]="state.drivers.data!"
+              [buses]="state.buses.data!"
+            >
+
+            </app-schedule-travels-page>
+          </ng-template> 
+        </mat-tab>
+        <mat-tab label="Travels by agencies"> 
+          <ng-template matTabContent>
+            <app-travels-by-agency
+              [agencies]="state.agencies.data!"
+              [busDrivers]="state.drivers.data!"
+              [buses]="state.buses.data!"
+            >
+
+            </app-travels-by-agency>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Create batch travels">
+          <ng-template matTabContent>
+            <app-travel-create-by-batch
+              [travelPaths]="state.travelPaths.data!"
+              [agencies]="state.agencies.data!">
+            </app-travel-create-by-batch>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Travels by city to City">
+          <ng-template matTabContent style="padding: 10px">
+              <app-travels-city-city
+                [agencies]="state.agencies.data!"
+                [busDrivers]="state.drivers.data!"
+                [buses]="state.buses.data!"
+                [cities]="state.cities.data!"
+              >
+            </app-travels-city-city>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+
+    }
+}

@@ -1,0 +1,113 @@
+<h2 mat-dialog-title>Edit Travel</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content>
+    @if(errorMessage()) {
+        <div class="form-post-error">
+            {{ errorMessage() }}
+        </div>
+    }
+    @if(isSubmitting()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Travel Path</mat-label>
+      <mat-select [formField]="travelForm.travelPathId" (valueChange)="onTravelPathChange($event)">
+        @for (path of data.travelPaths; track path.id) {
+        <mat-option [value]="path.id">
+            {{ path.toString()  }}
+        </mat-option>
+        }
+      </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Departure Agency</mat-label>
+      <mat-select [formField]="travelForm.departAgencyId">
+        @if(selectedTravelPath$()) {
+            <mat-option [value]="selectedTravelPath$()?.agency1?.id">
+                {{ selectedTravelPath$()?.agency1?.toString()  }}
+            </mat-option>
+            <mat-option [value]="selectedTravelPath$()?.agency2?.id">
+                {{ selectedTravelPath$()?.agency2?.toString()  }}
+            </mat-option>
+          }
+      </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Bus</mat-label>
+      <mat-select [formField]="travelForm.busId">
+        <mat-option [value]="null"></mat-option>
+        @for (bus of data.buses; track bus) {
+        <mat-option [value]="bus.id">
+            {{ bus.toString() }}
+        </mat-option>
+        }
+       </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Bus driver</mat-label>
+      <mat-select [formField]="travelForm.busDriverId">
+        <mat-option [value]="null"></mat-option>
+        @for (driver of data.busDrivers; track driver) {
+        <mat-option [value]="driver.id">
+            {{ driver.toString() }}
+        </mat-option>
+        }
+      </mat-select>
+      <mat-hint>&nbsp;</mat-hint>
+    </mat-form-field>
+    <div class="row">
+        <div class="col-50" style="margin-right: 10px;">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Depart date</mat-label>
+                <input matInput [matDatepicker]="picker1" [formField]="travelForm.plannedDepartDatetime">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+                  @for (error of travelForm.plannedDepartDatetime().errors(); track error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+            </mat-form-field>
+        </div>
+        <div class="col-50">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Depart time</mat-label>
+                <input matInput [formField]="travelForm.plannedDepartDatetime" [matTimepicker]="picker">
+                <mat-timepicker-toggle matIconSuffix [for]="picker"/>
+                <mat-timepicker #picker/>
+            <mat-hint>&nbsp;</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-50">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Ticket price</mat-label>
+            <input matInput type="number" [formField]="travelForm.ticketPrice">
+            <mat-hint>&nbsp;</mat-hint>
+            @for (error of travelForm.ticketPrice().errors(); track error) {
+              <mat-error>{{ error.message }}</mat-error>
+            }
+        </mat-form-field>
+      </div>
+      <div class="col-50">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Reservation fees</mat-label>
+          <input matInput type="number" [formField]="travelForm.reservationFees">
+          <mat-hint>&nbsp;</mat-hint>
+          @for (error of travelForm.reservationFees().errors(); track error) {
+            <mat-error>{{ error.message }}</mat-error>
+          }
+      </mat-form-field>
+      </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton="outlined" (click)="closeDialog()">Cancel</button>
+    <button matButton="filled" [disabled]="travelForm().invalid()" class="secondary" (click)="submit()">
+      Update
+    </button>
+</mat-dialog-actions>

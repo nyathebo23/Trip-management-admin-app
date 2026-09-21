@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { catchError, map, Observable, of } from "rxjs";
-import { isStringObject } from "util/types";
 
 export type ResponseState<T> = {
   data: T | null;

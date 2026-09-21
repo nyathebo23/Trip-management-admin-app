@@ -38,4 +38,12 @@ export class TokenService {
     }
   }
 
+  public clearToken(): void {
+    if (!this.isBrowser()) return;
+    try {
+      window.sessionStorage.removeItem(TOKEN_KEY);
+    } catch {
+      // noop
+    }
+  }
 }

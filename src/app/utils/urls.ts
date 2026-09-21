@@ -1,8 +1,9 @@
-export const baseUrl = "http://192.168.1.164:5062/";
+export const baseUrl = "http://localhost:5000/";
 
 export const cityReqUrl = baseUrl + "api/cities/";
 export const paymentMethodReqUrl = baseUrl + "api/paymentmethods/";
 export const busReqUrl = baseUrl + "api/bus/";
+export const travelPathReqUrl = baseUrl + "api/travelpaths/";
 export const agencyReqUrl = baseUrl + "api/agencies/";
 export const busDriverReqUrl = baseUrl + "api/busdrivers/";
 export const agencyAgentReqUrl = baseUrl + "api/agencyagents/";
@@ -11,4 +12,4 @@ export const accountReqUrl = baseUrl + "api/accounts/";
 export const travelReqUrl = baseUrl + "api/travels/"
 export const travelTicketReqUrl = baseUrl + "api/traveltickets/";
 export const refundReqUrl = baseUrl + "api/refunds/";
-export const loginUrl = accountReqUrl + "login";
+export const loginUrl = accountReqUrl + "login-admin";

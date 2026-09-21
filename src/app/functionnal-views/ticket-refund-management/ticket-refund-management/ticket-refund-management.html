@@ -1,0 +1,13 @@
+<div>
+@if(state$ | async; as state) {
+    @if (state.agencies.errorType == null && state.paymentMethods.errorType == null) {
+      <app-ticket-refund-table-list
+        [agencies]="state.agencies.data!"
+        [paymentMethods]="state.paymentMethods.data!"
+      >
+      </app-ticket-refund-table-list>
+
+    }
+}
+</div>
+

@@ -2,9 +2,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
 import { paymentMethodReqUrl } from '../utils/urls';
-import { PaymentMethod } from '../payment-method-management/interfaces/payment-method';
-import { PaymentMethodData } from '../payment-method-management/interfaces/payment-method-data';
+import { IPaymentMethod } from '../params-entities-views/payment-method-management/interfaces/ipayment-method';
+import { PaymentMethodData } from '../params-entities-views/payment-method-management/interfaces/payment-method-data';
 import { getErrorType, ResponseState } from '../utils/response';
+import { IEntityAudit } from '../global/interfaces/ientity-audit';
+import { PaymentMethod } from '../models/payment-method';
 
 @Injectable({
 providedIn: 'root',
@@ -18,6 +20,12 @@ export class PaymentMethodService {
         map(data => ({ data, errorType: null } satisfies ResponseState<PaymentMethod[]>)),
         catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
     ))); 
+
+    paymentMethodAuditsResp$ = this.refresh$.pipe(
+        switchMap(() => this.getAllAudits().pipe(
+        map(data => ({ data, errorType: null } satisfies ResponseState<IEntityAudit[]>)),
+        catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
+    )));
 
     save(data: PaymentMethodData): Observable<PaymentMethod> {
         return this.httpClient.post<PaymentMethod>(paymentMethodReqUrl, data)
@@ -41,6 +49,13 @@ export class PaymentMethodService {
     }
 
     getAll(): Observable<PaymentMethod[]> {
-        return this.httpClient.get<PaymentMethod[]>(paymentMethodReqUrl)
+        return this.httpClient.get<IPaymentMethod[]>(paymentMethodReqUrl).pipe(
+            map((paymentMethods) => paymentMethods.map(PaymentMethod.fromIPaymentMethod))
+        );
     }
+
+    getAllAudits(): Observable<IEntityAudit[]> {
+        return this.httpClient.get<IEntityAudit[]>(paymentMethodReqUrl + 'audits')
+    }
+
 }

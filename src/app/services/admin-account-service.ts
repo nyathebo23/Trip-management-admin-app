@@ -22,6 +22,14 @@ export class AdminAccountService {
         shareReplay({ bufferSize: 1, refCount: true })   // cache + unsubscribe auto si plus personne écoute
     );
 
+    adminAccountAuditResp$ = this.refresh$.pipe(
+        switchMap(() => this.getAll().pipe(
+            map(data => ({ data, errorType: null } satisfies ResponseState<IUser[]>)),
+            catchError((err: HttpErrorResponse) => of({ data: null, errorType: getErrorType(err) }))
+        )),
+        shareReplay({ bufferSize: 1, refCount: true })   // cache + unsubscribe auto si plus personne écoute
+    );
+
     save(data: AdminAccountData): Observable<IUser> {
         return this.httpClient.post<IUser>(accountReqUrl + "register", data)
         .pipe(

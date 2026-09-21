@@ -1,0 +1,30 @@
+@if (citiesDatas$ | async; as state) {
+    @if (state.cities.errorType == null && state.cityAudits.errorType == null) {
+        <div class="row">
+            <div class="body-box col-50">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                        <mat-panel-title> Create new city </mat-panel-title>
+                        <mat-panel-description>
+                            Click to expand create city form
+                        </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <div class="flex justify-content-center">
+                            <app-city-form></app-city-form>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-city-table-list [cities]="state.cities.data!"></app-city-table-list>
+            </div>
+            <div class="col-50">
+                <app-audit-history
+                    [objectType]="'City'"
+                    [entityObjects]="state.cities.data!"
+                    [entityAudits]="state.cityAudits.data!"
+                >
+                </app-audit-history>
+            </div>
+        </div>
+    }
+}

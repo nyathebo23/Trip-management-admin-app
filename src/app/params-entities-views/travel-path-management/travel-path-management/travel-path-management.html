@@ -1,0 +1,27 @@
+@if (travelPathsDatas$ | async; as resp) {
+    @if (resp.travelPaths.errorType == null && resp.agencies.errorType == null && resp.travelPathAudits.errorType == null) {
+        <div class="row">
+            <div class="body-box col-60">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title> Create new travel path </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <app-travel-path-form [agencies]="resp.agencies.data!"></app-travel-path-form>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-travel-path-table-list [travelPaths]="resp.travelPaths.data!">
+
+                </app-travel-path-table-list>
+            </div>
+            <div class="col-40">
+                <app-audit-history
+                    [objectType]="'Travel path'"
+                    [entityObjects]="resp.travelPaths.data!"
+                    [entityAudits]="resp.travelPathAudits.data!"
+                >
+                </app-audit-history>
+            </div>
+        </div>
+    }
+}

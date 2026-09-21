@@ -2,10 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { travelReqUrl } from '../utils/urls';
-import { TravelData } from '../travel-management/interfaces/travel-data';
-import { ITravel } from '../travel-management/interfaces/travel';
-import { TravelsPagedResp } from '../travel-management/interfaces/travels-paged-resp';
-import { TravelCreateBatchData } from '../travel-management/interfaces/travel-create-batch-data';
+import { TravelData } from '../functionnal-views/travel-management/interfaces/travel-data';
+import { ITravel } from '../functionnal-views/travel-management/interfaces/travel';
+import { TravelsPagedResp } from '../functionnal-views/travel-management/interfaces/travels-paged-resp';
+import { TravelCreateBatchData } from '../functionnal-views/travel-management/interfaces/travel-create-batch-data';
 
 @Injectable({
   providedIn: 'root',

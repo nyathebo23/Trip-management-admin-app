@@ -17,8 +17,28 @@ export const navItems = [
         route: 'payment-method',
     },
     {
+        label: 'Travel Path',
+        route: 'travelpath',
+    },
+    {
         label: 'Travel',
         route: 'travel',
+    },
+    {
+        label: 'Travels by agency',
+        route: 'travels-by-agency',
+    },
+    {
+        label: 'Travel schedule',
+        route: 'travels-schedule',
+    },
+    {
+        label: 'Travels create by batch',
+        route: 'travels-batch-create',
+    },
+    {
+        label: 'Travel city to city',
+        route: 'travels-city-city',
     },
     {
         label: 'Admin account',

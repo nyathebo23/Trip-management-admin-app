@@ -1,0 +1,47 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title><h2>Travel Paths List</h2></mat-card-title>
+    </mat-card-header>
+    <table mat-table [dataSource]="travelPaths()" class="mat-elevation-z8 custom-header">
+        <!-- Name Column -->
+        <ng-container matColumnDef="Agency 1">
+            <th mat-header-cell *matHeaderCellDef> Agency 1 </th>
+            <td mat-cell *matCellDef="let element"> {{element.agency1.toString()}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Agency 2">
+            <th mat-header-cell *matHeaderCellDef> Agency 2 </th>
+            <td mat-cell *matCellDef="let element"> {{element.agency2.toString()}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Distance">
+            <th mat-header-cell *matHeaderCellDef> Distance </th>
+            <td mat-cell *matCellDef="let element"> {{element.distance}} km </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Estimated travel duration">
+            <th mat-header-cell *matHeaderCellDef> Estimated travel duration </th>
+            <td mat-cell *matCellDef="let element"> {{element.estimatedTravelDuration.toString()}} </td>
+        </ng-container>
+        
+        <ng-container matColumnDef="Options">
+            <th mat-header-cell *matHeaderCellDef> Options </th>
+            <td mat-cell *matCellDef="let element"> 
+                <div class="icons-option-block">
+                    <button matMiniFab (click)="editItem(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+
+                    <button matMiniFab class="danger" (click)="deleteItem(element.id)" aria-label="Delete">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</mat-card>
+
+

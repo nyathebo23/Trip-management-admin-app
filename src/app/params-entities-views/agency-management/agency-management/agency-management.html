@@ -1,0 +1,32 @@
+@if (agenciesDatas$ | async; as resp) {
+    @if (resp.agencies.errorType == null && resp.cities.errorType == null && resp.agencyAudits.errorType == null) {
+        <div class="row">
+            <div class="body-box col-60">
+                <mat-accordion style="margin-bottom: 20px;" >
+                    <mat-expansion-panel (opened)="formOpenState.set(true)" (closed)="formOpenState.set(false)">
+                        <mat-expansion-panel-header>
+                        <mat-panel-title> Create new agency </mat-panel-title>
+                        <mat-panel-description>
+                            Click to expand create agency form
+                        </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <app-agency-form [cities]="resp.cities.data!"></app-agency-form>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <app-agency-table-list 
+                    [agencies]="resp.agencies.data!" 
+                    [cities]="resp.cities.data!"
+                >
+                </app-agency-table-list>
+            </div>
+            <div class="col-40">
+                <app-audit-history
+                    [objectType]="'Agency'"
+                    [entityObjects]="resp.agencies.data!"
+                    [entityAudits]="resp.agencyAudits.data!"
+                >
+                </app-audit-history>
+            </div>
+        </div>
+    }
+}

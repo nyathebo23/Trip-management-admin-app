@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { travelTicketReqUrl } from '../utils/urls';
+import { TravelTicket } from '../functionnal-views/travel-ticket-management/interfaces/travel-ticket';
+import { TicketsPagedResp } from '../functionnal-views/travel-ticket-management/interfaces/tickets-paged-resp';
 
 @Injectable({
 providedIn: 'root',
@@ -21,7 +23,7 @@ export class TravelTicketService {
         return this.httpClient.delete(travelTicketReqUrl + id);
     }
 
-    getAll(): Observable<TravelTicket[]> {
-        return this.httpClient.get<TravelTicket[]>(travelTicketReqUrl)
+    getAllByAgency(agencyId: string, reqParams: HttpParams): Observable<TicketsPagedResp> {
+        return this.httpClient.get<TicketsPagedResp>(`${travelTicketReqUrl}/agency/${agencyId}`, { params: reqParams })
     }
 }
