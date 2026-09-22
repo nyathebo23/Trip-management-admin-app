@@ -14,10 +14,10 @@ import { TicketRefundManagement } from './functionnal-views/ticket-refund-manage
 import { TravelManagementPage } from './functionnal-views/travel-management/travel-management-page/travel-management-page';
 import { authGuard } from './authentication/services/guards/auth-guard';
 import { TravelPathManagement } from './params-entities-views/travel-path-management/travel-path-management/travel-path-management';
-import { TravelCreateByBatch } from './functionnal-views/travel-management/travel-create-by-batch/travel-create-by-batch';
+/*import { TravelCreateByBatch } from './functionnal-views/travel-management/travel-create-by-batch/travel-create-by-batch';
 import { TravelsByAgency } from './functionnal-views/travel-management/travels-by-agency/travels-by-agency';
 import { ScheduleTravelsPage } from './functionnal-views/travel-management/schedule-travels-page/schedule-travels-page';
-import { TravelsCityCity } from './functionnal-views/travel-management/travels-city-city/travels-city-city';
+import { TravelsCityCity } from './functionnal-views/travel-management/travels-city-city/travels-city-city';*/
 
 
 export const routes: Routes = [
@@ -37,10 +37,10 @@ export const routes: Routes = [
             {path: 'admin-account', component: AdminAccountManagement},
             {path: 'customer', component: CustomerManagement},
             {path: 'travel', component: TravelManagementPage},
-            {path: 'travels-city-city', component: TravelsCityCity},
+            /*{path: 'travels-city-city', component: TravelsCityCity},
             {path: 'travels-by-agency', component: TravelsByAgency},
             {path: 'travels-schedule', component: ScheduleTravelsPage},
-            {path: 'travels-batch-create', component: TravelCreateByBatch},
+            {path: 'travels-batch-create', component: TravelCreateByBatch},*/
             {path: 'travel-ticket', component: TravelTicketManagement},
             {path: 'ticket-refund', component: TicketRefundManagement},
         ]
