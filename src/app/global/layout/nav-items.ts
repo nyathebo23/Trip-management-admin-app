@@ -24,7 +24,7 @@ export const navItems = [
         label: 'Travel',
         route: 'travel',
     },
-    {
+    /*{
         label: 'Travels by agency',
         route: 'travels-by-agency',
     },
@@ -39,7 +39,7 @@ export const navItems = [
     {
         label: 'Travel city to city',
         route: 'travels-city-city',
-    },
+    },*/
     {
         label: 'Admin account',
         route: 'admin-account',
