@@ -17,7 +17,6 @@ import { TravelData } from '../interfaces/travel-data';
 import { HttpErrorResponse } from '@angular/common/http';
 import { getErrorMessage } from '../../../utils/response';
 import { futureDateConstraint, validateDatetime } from '../../../utils/validation-rules';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TravelPathDetails } from '../../../models/travel-path-details';
 
@@ -32,7 +31,6 @@ import { TravelPathDetails } from '../../../models/travel-path-details';
 export class TravelEditDialog {
   readonly dialogRef = inject(MatDialogRef<TravelEditDialog>);
   isSubmitting = signal(false);
-  private readonly _snackBar = inject(MatSnackBar);
   data = inject<TravelUpdateDialogData>(MAT_DIALOG_DATA);
   travelService = inject(TravelService);
   travelModel = signal<TravelData>({ 
@@ -40,7 +38,7 @@ export class TravelEditDialog {
     travelPathId: this.data.travelData.travelPathId,
     busId: this.data.travelData.busId,
     busDriverId: this.data.travelData.busDriverId,
-    plannedDepartDatetime: this.data.travelData.plannedDepartDatetime, 
+    plannedDepartDatetime: this.data.travelData.plannedDepartDatetime,
     travelType: this.data.travelData.travelType,
     ticketPrice: this.data.travelData.ticketPrice,
     reservationFees: this.data.travelData.reservationFees
@@ -57,12 +55,12 @@ export class TravelEditDialog {
     required(schema.departAgencyId, {message: 'Departure agency is required'}); 
     required(schema.travelPathId, {message: 'Travel path is required'});
     required(schema.plannedDepartDatetime, {message: 'Departure datetime is required'});
-    futureDateConstraint(schema.plannedDepartDatetime),
+    futureDateConstraint(schema.plannedDepartDatetime);
     validateDatetime(schema.plannedDepartDatetime, {message: 'Invalid date or time format'});
 
   });
 
-  selectedTravelPath$ = signal<TravelPathDetails|null>(null);
+  selectedTravelPath$ = signal<TravelPathDetails|null>(this.data.travelPaths.find(path => path.id === this.data.travelData.travelPathId) || null);
 
   onTravelPathChange(travelPathId: string) {
     const selectedPath = this.data.travelPaths.find(path => path.id === travelPathId) || null;
@@ -75,14 +73,13 @@ export class TravelEditDialog {
   }
 
   submit() { 
-    const travelData = this.travelModel();
     this.isSubmitting.set(true);
     this.travelService.update(this.data.travelData.id, this.travelModel())
     .subscribe({ 
       next: () => {
         this.isSubmitting.set(false);
         this.errorMessage.set(null);
-        this._snackBar.open("Travel edited successfully", "Close", {duration: 3000});
+        this.dialogRef.close(true);
       }, 
       error: (err: HttpErrorResponse) => {
         this.isSubmitting.set(false);

@@ -13,8 +13,9 @@
 
 .layout-toolbar {
   position: fixed;
-  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
   z-index: 2;
+  height: 56px;
+  min-height: 56px;
   background-color: var(--mat-sys-primary);
   color: aliceblue;
   @include mat.fab-overrides((
@@ -27,10 +28,11 @@ h1.layout-app-name {
 }
 
 .layout-sidenav-container {
-  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
-     causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
-  flex: 1;
-  /* push the sidenav container below the fixed toolbar (toolbar height = 56px) */
+  position: absolute;
+  top: 56px;
+  right: 0;
+  bottom: 0;
+  left: 0;
   mat-sidenav {
         @include mat.sidenav-overrides((
         container-shape: 0,

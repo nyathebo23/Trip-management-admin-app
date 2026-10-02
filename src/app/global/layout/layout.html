@@ -4,7 +4,7 @@
       <h1 class="layout-app-name">Trip Manager App</h1>
     </mat-toolbar>
 
-    <mat-sidenav-container class="layout-sidenav-container" [style.marginTop.px]="0">
+    <mat-sidenav-container class="layout-sidenav-container">
       <mat-sidenav #snav [mode]="'side'" [fixedInViewport]="true" fixedTopGap="56">
         <mat-nav-list>
           @for (nav of sideBarItems; track nav) {
@@ -17,7 +17,7 @@
           }
         </mat-nav-list>
       </mat-sidenav>
-      <mat-sidenav-content style="padding-top: 60px;">
+      <mat-sidenav-content>
         <router-outlet />
       </mat-sidenav-content>
     </mat-sidenav-container>

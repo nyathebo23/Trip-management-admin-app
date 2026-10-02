@@ -44,12 +44,15 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Depart Agency</mat-label>
-            <mat-select [formField]="reqParamsForm.departAgency!">
-            @for (agency of agencies(); track agency) {
-                <mat-option [value]="agency.id">
-                    {{ agency.toString() }}
+            <mat-select [formField]="reqParamsForm.departAgency!" [canSelectNullableOptions]="true">
+                <mat-option [value]="null">
+                    ALL
                 </mat-option>
-            }
+                @for (agency of agencies(); track agency) {
+                    <mat-option [value]="agency.id">
+                        {{ agency.toString() }}
+                    </mat-option>
+                }
             </mat-select>
             <mat-hint>&nbsp;</mat-hint>
         </mat-form-field>

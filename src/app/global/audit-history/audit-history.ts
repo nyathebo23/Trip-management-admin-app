@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { MatCardModule } from "@angular/material/card";
 import { DatePipe } from '@angular/common';
+import { parseUtcDate } from '../../utils/api-date';
 @Component({
   selector: 'app-audit-history',
   imports: [MatPaginatorModule, MatTableModule, MatIconModule, MatButtonModule, MatCardModule, DatePipe],
@@ -33,7 +34,7 @@ export class AuditHistory implements OnInit {
       return {
         objectStr: entity ? entity.toString() : 'Unknown',
         operationType: this.ops[audit.operationType],
-        operationDatetime: audit.operationDatetime,
+        operationDatetime: parseUtcDate(audit.operationDatetime),
         user: audit.user.username,
         clientIP: audit.clientIP,
         auditDetails: audit.auditDetails,

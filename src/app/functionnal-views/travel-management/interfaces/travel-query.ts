@@ -9,6 +9,6 @@ export interface TravelQuery {
     travelType: TravelType;
     pageNumber?: number;
     pageSize?: number;
-    departAgency?: string;
+    departAgency?: string | null;
     arrivalAgency?: string;
 }

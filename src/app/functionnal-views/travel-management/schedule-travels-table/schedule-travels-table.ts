@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +27,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TravelState } from '../enums/travel-state';
 import { MatInputModule } from '@angular/material/input';
 import { rangeDateValidity, validateDatetime } from '../../../utils/validation-rules';
+import { TravelPathDetails } from '../../../models/travel-path-details';
 
 @Component({
   selector: 'app-schedule-travels-table',
@@ -41,6 +42,11 @@ export class ScheduleTravelsTable {
   displayedColumns: string[] = ['Depart Agency', 'Arrival Agency', 'Travel type', 'Travel state',
      'Planned depart datetime', 'Driver', 'Bus', 'Ticket price', 'Reservation fees', 'Options'];
   travelService = inject(TravelService);
+  private readonly scheduleRefreshEffect = effect(() => {
+    if (this.travelService.scheduleRefresh() > 0) {
+      untracked(() => this.getDatasTravels());
+    }
+  });
 
   pageIndex = 0;         
   pageSize = 10;          
@@ -48,6 +54,7 @@ export class ScheduleTravelsTable {
   errorMessage = signal<string>('');
   isLoading = signal(true);
   agencies = input.required<Agency[]>();
+  travelPaths = input.required<TravelPathDetails[]>();
   buses = input.required<Bus[]>();
   busDrivers = input.required<BusDriver[]>();
   datePipe = inject(DatePipe);
@@ -84,11 +91,10 @@ export class ScheduleTravelsTable {
     startDatetime: null,
     endDatetime: null,
     travelType: TravelType.CLASSIC,
-    departAgency: ''
+    departAgency: null
   });
 
   reqParamsForm = form(this.reqParamsModel, (schema) => {
-    required(schema.departAgency!, {message: 'You must choose depart agency'});
     validateDatetime(schema.startDatetime, {message: 'Start time has invalid format'});
     validateDatetime(schema.endDatetime, {message: 'End time has invalid format'});
     rangeDateValidity(schema.startDatetime, schema.endDatetime);
@@ -108,8 +114,10 @@ export class ScheduleTravelsTable {
 
     this.isLoading.set(true);
     
-    this.travelService.getFutureTravelsByDepartAgencyId(params.departAgency! , reqParams)
-    .subscribe({
+    const callFutureTravelsFunc = params.departAgency ? this.travelService.getFutureTravelsByDepartAgencyId(params.departAgency, reqParams) 
+    : this.travelService.getFutureTravels(reqParams); 
+
+    callFutureTravelsFunc.subscribe({
       next: (resp) => {
         this.dataSource.set(resp.items.map((travel) => {
           return {
@@ -167,7 +175,7 @@ export class ScheduleTravelsTable {
     this.editDialog.open(TravelEditDialog, { 
       data: {
         travelData: item,
-        agencies: this.agencies(),
+        travelPaths: this.travelPaths(),
         buses: this.buses(),
         busDrivers: this.busDrivers()
       } 
